@@ -1,52 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>REALITY MALL - Shop Real Businesses</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>REALITY MALL</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-[#f8f8f6] text-zinc-900">
-
-<nav class="flex justify-between items-center p-5 bg-black text-white sticky top-0 z-50">
-  <b class="text-2xl tracking-tighter">REALITY.</b>
-  <a href="dashboard.html" class="bg-white text-black px-5 py-2 rounded-full font-black text-sm">+ OPEN SHOP</a>
-</nav>
-
-<div class="text-center py-10 px-6 max-w-3xl mx-auto">
-  <h1 class="text-5xl font-black leading-[0.9]">REALITY<br>MALL</h1>
-  <p class="mt-4 text-zinc-600 text-sm leading-relaxed">
-    REALITY is Port Harcourt's viral online business shopping mall. Real shops, real products. Every product is a little sponsored ad.
-    Sellers open shop in 30 seconds, pay <b>₦2k / ₦5k / ₦10k</b> to go viral, buyers chat them directly on WhatsApp. No commission.
-    Pay to <b>Moniepoint / Opay 9078617514 - Odera Chidalu Vitalis</b>
-  </p>
-  <div class="mt-4 flex justify-center gap-2 text-[10px]"><span class="bg-zinc-200 px-2 py-1 rounded-full">Little Ad ₦2k</span><span class="bg-yellow-400 px-2 py-1 rounded-full">Viral ₦5k</span><span class="bg-green-500 text-white px-2 py-1 rounded-full">Super Viral ₦10k</span></div>
-</div>
-
+<body class="bg-[#f8f8f6]">
+<nav class="flex justify-between p-5 bg-black text-white sticky top-0"><b class="text-2xl">REALITY.</b><a href="dashboard.html" class="bg-white text-black px-5 py-2 rounded-full font-bold">+ Open Shop</a></nav>
+<div class="text-center py-8 px-4 max-w-3xl mx-auto"><h1 class="text-5xl font-black">REALITY<br>MALL</h1><p class="mt-3 text-sm text-zinc-600">PH's viral business mall. Real shops, real products. Every product is a little ad. Pay to go viral: ₦2k Little, ₦5k Viral, ₦10k Super Viral TOP. Pay: Moniepoint/Opay 9078617514 Odera Chidalu Vitalis</p></div>
 <div id="shops" class="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 max-w-7xl mx-auto">Loading REALITY...</div>
-
 <script>
-// PASTE YOUR SUPABASE KEYS HERE
-const SUPA_URL = 'https://YOUR_PROJECT_ID.supabase.co';
-const SUPA_KEY = 'YOUR_ANON_KEY';
+const SUPA_URL = 'YOUR_PROJECT_URL_HERE';
+const SUPA_KEY = 'sb_publishable_Faq5PVc7M_Qm___qo5qSwA_MW_hRWzI';
 const supabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
-
 async function load(){
-  const { data } = await supabase.from('products').select('*').eq('status','approved').order('viral_score',{ascending:false}).order('created_at',{ascending:false});
-  const div = document.getElementById('shops');
-  if(!data || data.length==0){ div.innerHTML='<p class="col-span-4 text-center py-20">No shops yet. Be the first to go viral!</p>'; return; }
+  const { data, error } = await supabase.from('products').select('*').eq('status','approved').order('viral_score',{ascending:false});
+  const div=document.getElementById('shops');
+  if(error){ div.innerHTML='Fix Project URL! Error: '+error.message; return; }
+  if(!data||data.length==0){ div.innerHTML='<p class="col-span-4 text-center py-20">No products yet. Be first!<br><a href="dashboard.html" class="bg-black text-white px-5 py-2 rounded-full mt-4 inline-block">Open Shop ₦2k</a></p>'; return; }
   div.innerHTML='';
   data.forEach(p=>{
-    const isElite = p.plan=='elite';
-    div.innerHTML+=`
-    <div class="bg-white p-3 rounded-[20px] border ${isElite?'border-green-500 border-2 shadow-lg':'border-zinc-100'}">
-      <div class="flex justify-between items-center"><span class="text-[8px] font-black px-2 py-1 rounded-full ${isElite?'bg-green-500 text-white':p.plan=='pro'?'bg-yellow-400':'bg-zinc-200'}">${p.plan?.toUpperCase()}</span><span class="text-[8px] text-zinc-400">REALITY AD</span></div>
-      <img src="${p.image || 'https://via.placeholder.com/300'}" class="h-36 w-full object-cover rounded-xl mt-2">
-      <p class="font-bold text-sm mt-2 truncate">${p.name}</p>
-      <p class="text-[11px] text-zinc-500">${p.shop_name}</p>
-      <p class="font-black mt-1">₦${p.price?.toLocaleString()}</p>
-      <a href="https://wa.me/${p.whatsapp}?text=Hi, I saw ${p.name} on REALITY MALL" target="_blank" class="block text-center mt-2 bg-black text-white p-2.5 rounded-full text-xs font-bold">Buy on WhatsApp</a>
-    </div>`;
+    div.innerHTML+=`<div class="bg-white p-3 rounded-[20px] border ${p.plan=='elite'?'border-green-500 border-2':''}"><span class="text-[8px] font-black px-2 py-1 rounded-full ${p.plan=='elite'?'bg-green-500 text-white':p.plan=='pro'?'bg-yellow-400':'bg-zinc-200'}">${p.plan}</span><img src="${p.image}" class="h-32 w-full object-cover rounded-xl mt-2"><p class="font-bold text-sm mt-2 truncate">${p.name}</p><p class="text-[11px]">${p.shop_name}</p><p class="font-black">₦${p.price}</p><a href="https://wa.me/${p.whatsapp}" target="_blank" class="block bg-black text-white text-center p-2 rounded-full text-xs mt-2">Buy</a></div>`;
   });
 }
 load();
