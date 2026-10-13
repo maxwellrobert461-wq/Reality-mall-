@@ -1,40 +1,46 @@
 <!DOCTYPE html>
 <html>
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Post - REALITY MALL</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>body{font-family:Arial;padding:15px;background:#f5f5f5}input,select,textarea{width:100%;padding:12px;margin:8px 0;border:1px solid #ddd;border-radius:8px;box-sizing:border-box}button{width:100%;padding:14px;background:#000;color:#fff;border:none;border-radius:8px;font-weight:bold;font-size:16px;margin-top:10px}.box{background:#fff;padding:15px;border-radius:12px}</style>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Post - REALITY MALL</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>body{font-family:Arial;padding:15px;background:#f5f5f5} input,textarea,select{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:1px solid #ddd;box-sizing:border-box} button{width:100%;padding:14px;background:#000;color:#fff;border:none;border-radius:8px;font-weight:bold;margin-top:10px} .card{background:#fff;padding:20px;border-radius:12px}</style>
 </head>
 <body>
-<div class="box">
-<h2>REALITY. - Post</h2>
-<div style="background:#e8ffe8;padding:10px;border-radius:8px;border:1px dashed #25D366;margin-bottom:15px;text-align:center"><a href="invite.html" style="color:#25D366;font-weight:bold;text-decoration:none">🎁 Invite Friends & Get More Views →</a></div>
-<a href="index.html">← Back to Mall</a><br><br>
-<label>Choose where to post:</label>
-<select id="feed_type" onchange="changeType()"><option value="shops">🛍️ SHOPS - Sell Product</option><option value="posts">🖼️ POSTS - Picture + Caption</option><option value="video">🎥 VIDEO - Video + Caption</option></select>
-<input type="text" id="shop_name" placeholder="Your Name / Shop Name">
-<div id="shopFields"><input type="text" id="name" placeholder="Product Name"><input type="number" id="price" placeholder="Price"></div>
-<input type="text" id="whatsapp" placeholder="WhatsApp e.g. 2349078617514">
-<input type="file" id="imageFile" accept="image/*,video/*">
-<textarea id="content" rows="4" placeholder="What's on your mind? Write here..."></textarea>
-<button onclick="postNow()" id="btn">POST NOW</button><p id="status"></p>
+<a href="index.html">← Back to Mall</a> <a href="profile.html" style="float:right">My Profile</a>
+<h2>Post to REALITY MALL</h2>
+<div class="card">
+<input id="shop_name" placeholder="Your Shop / Your Name (e.g. Emeka Stores)" required>
+<input id="whatsapp" placeholder="WhatsApp number e.g. 234907..." required>
+<select id="feed_type"><option value="shops">🛍️ Shop Product (with price)</option><option value="posts">📝 General Post</option><option value="video">🎥 Video Post</option></select>
+<input id="price" type="number" placeholder="Price in Naira (for Shop products)">
+<textarea id="content" placeholder="What are you selling? Describe..." rows="4" required></textarea>
+<input id="image" type="file" accept="image/*,video/*">
+<p id="status"></p>
+<button onclick="postNow()" id="postBtn">Post Now</button>
+<p style="font-size:13px;color:#666">Your profile will be created automatically. People can click your name to see all your products.</p>
 </div>
 <script>
-const SUPABASE_URL='https://trawtkndvzsplcmmtjox.supabase.co';
-const SUPABASE_ANON_KEY='sb_publishable_ACkUQyZDMHThA7SYE1ME2w_HMNjyIXg';
-const client=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-function changeType(){const t=document.getElementById('feed_type').value;document.getElementById('shopFields').style.display=t==='shops'?'block':'none';}
+const SUPABASE_URL='https://trawtkndvzsplcmmtjox.supabase.co'; const SUPABASE_ANON_KEY='sb_publishable_ACkUQyZDMHThA7SYE1ME2w_HMNjyIXg'; const client=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 async function postNow(){
- const btn=document.getElementById('btn');const s=document.getElementById('status');
- const feed_type=document.getElementById('feed_type').value; const shop_name=document.getElementById('shop_name').value||'Reality User';
- const name=document.getElementById('name').value||'Post'; const price=document.getElementById('price').value||0;
- const whatsapp=document.getElementById('whatsapp').value; const content=document.getElementById('content').value; const file=document.getElementById('imageFile').files[0];
- if(!whatsapp||!file){alert('Enter WhatsApp and choose file');return}
- btn.innerText='Posting...';btn.disabled=true;
- try{const fn=Date.now()+'_'+file.name.replace(/[^a-z0-9.]/gi,'_');const {error:up}=await client.storage.from('reality-media').upload(fn,file,{upsert:true});if(up)throw up;const {data:pub}=client.storage.from('reality-media').getPublicUrl(fn);
- const {error:ins}=await client.from('products').insert([{shop_name,name:feed_type==='shops'?name:content.substring(0,50),price:parseInt(price)||0,whatsapp,feed_type,content,image:pub.publicUrl,status:'approved',views:0}]);if(ins)throw ins;
- alert('Posted!');window.location.href='index.html';}catch(e){s.innerText='❌ '+e.message;btn.innerText='POST NOW';btn.disabled=false;}
+ const shop_name=document.getElementById('shop_name').value.trim();
+ const whatsapp=document.getElementById('whatsapp').value.trim();
+ const feed_type=document.getElementById('feed_type').value;
+ const price=document.getElementById('price').value;
+ const content=document.getElementById('content').value.trim();
+ const file=document.getElementById('image').files[0];
+ if(!shop_name||!whatsapp||!content){alert('Fill shop name, WhatsApp and description');return}
+ document.getElementById('postBtn').innerText='Posting...'; document.getElementById('status').innerText='Uploading...';
+ let imageUrl='';
+ try{
+  if(file){
+   const fileName=Date.now()+'_'+file.name; const {data,error}=await client.storage.from('product-images').upload(fileName,file);
+   if(error)throw error; const {data:pub}=client.storage.from('product-images').getPublicUrl(fileName); imageUrl=pub.publicUrl;
+  }
+  const {data,error}=await client.from('products').insert([{shop_name,whatsapp,feed_type,price:price?parseInt(price):0,content,name:content,image:imageUrl,status:'approved',views:0}]).select();
+  if(error)throw error;
+  localStorage.setItem('myShop',shop_name); localStorage.setItem('myWhatsApp',whatsapp);
+  document.getElementById('status').innerText='✅ Posted! Redirecting to your profile...';
+  setTimeout(()=>{window.location.href=`profile.html?shop=${encodeURIComponent(shop_name)}`},1000);
+ }catch(e){document.getElementById('status').innerText='Error: '+e.message; document.getElementById('postBtn').innerText='Post Now';}
 }
-changeType();
 </script>
 </body>
 </html>
