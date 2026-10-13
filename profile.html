@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Profile - REALITY MALL</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>body{font-family:Arial;margin:0;background:#f5f5f5} .header{background:#000;color:#fff;padding:15px;display:flex;justify-content:space-between} .profile-card{background:#fff;padding:20px;text-align:center} .avatar{width:80px;height:80px;border-radius:50%;background:#000;color:#fff;font-size:40px;display:flex;align-items:center;justify-content:center;margin:0 auto} .product-card{background:#fff;margin:10px;padding:15px;border-radius:10px} .product-card img{width:100%;border-radius:10px;max-height:300px;object-fit:cover} .btn{padding:10px;background:#000;color:#fff;border:none;border-radius:8px;width:100%;margin-top:8px;font-weight:bold} .stats{display:flex;justify-content:space-around;margin:15px 0} .stat{font-weight:bold}</style>
+</head>
+<body>
+<div class="header"><a href="index.html" style="color:#fff;text-decoration:none">← Mall</a><a href="dashboard.html" style="color:#fff;text-decoration:none;background:#fff;color:#000;padding:6px 12px;border-radius:20px">+ Post</a></div>
+<div class="profile-card">
+<div class="avatar" id="avatar">R</div>
+<h2 id="shopName">Loading...</h2>
+<p id="whatsapp"></p>
+<div class="stats"><div class="stat"><span id="postCount">0</span><br>Posts</div><div class="stat"><span id="viewCount">0</span><br>Views</div><div class="stat">⭐ 4.9<br>Rating</div></div>
+<a id="chatBtn" href="#"><button class="btn" style="background:#25D366">Chat on WhatsApp</button></a>
+<button class="btn" onclick="shareProfile()" style="background:#fff;color:#000;border:1px solid #000">Share Profile</button>
+</div>
+<div style="padding:10px"><h3>Products by this seller</h3><div id="products">Loading...</div></div>
+<script>
+const SUPABASE_URL='https://trawtkndvzsplcmmtjox.supabase.co'; const SUPABASE_ANON_KEY='sb_publishable_ACkUQyZDMHThA7SYE1ME2w_HMNjyIXg'; const client=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+let shop=new URLSearchParams(location.search).get('shop'); if(!shop)shop=localStorage.getItem('myShop');
+async function load(){ if(!shop){document.getElementById('products').innerHTML='No shop found. Post something first! <a href="dashboard.html">Post Now</a>';return}
+ document.getElementById('shopName').innerText=shop; document.getElementById('avatar').innerText=shop.charAt(0).toUpperCase();
+ const {data}=await client.from('products').select('*').eq('shop_name',shop).order('created_at',{ascending:false});
+ if(!data||!data.length){document.getElementById('products').innerHTML='No posts yet';return}
+ let totalViews=0; let wa=''; data.forEach(p=>{totalViews+=p.views||0; wa=p.whatsapp});
+ document.getElementById('postCount').innerText=data.length; document.getElementById('viewCount').innerText=totalViews; document.getElementById('whatsapp').innerText='WhatsApp: '+wa; document.getElementById('chatBtn').href=`https://wa.me/${wa}`;
+ let html=''; data.forEach(p=>{ html+=`<div class="product-card"><img src="${p.image}"><h4>${p.content||p.name}</h4><p>₦${(p.price||0).toLocaleString()} - ${p.views||0} views</p><a href="boost.html?id=${p.id}"><button class="btn">🚀 Boost</button></a></div>`; }); document.getElementById('products').innerHTML=html;
+} function shareProfile(){ let url=`https://realitymall.vercel.app/profile.html?shop=${encodeURIComponent(shop)}`; if(navigator.share){navigator.share({title:shop,url})}else{prompt('Copy profile link:',url)} } load();
+</script>
+</body>
+</html>
