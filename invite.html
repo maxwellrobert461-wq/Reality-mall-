@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Invite - REALITY MALL</title>
+<style>body{font-family:Arial;padding:20px;background:#000;color:#fff;text-align:center}.box{background:#fff;color:#000;padding:20px;border-radius:15px;margin-top:20px}input{width:100%;padding:12px;border-radius:8px;border:1px solid #ddd;margin:10px 0;box-sizing:border-box}button{width:100%;padding:14px;background:#25D366;color:#fff;border:none;border-radius:8px;font-weight:bold;font-size:16px;margin:5px 0}</style>
+</head>
+<body>
+<h1>REALITY. INVITE</h1><p>Invite friends & get more views</p>
+<div class="box"><h3>Your Invite Link</h3><input id="link" readonly><button onclick="shareWA()">📲 Share on WhatsApp</button><button onclick="shareLink()" style="background:#000">🔗 Copy Link</button><p id="count"></p><a href="index.html" style="color:#000">← Back to Mall</a></div>
+<script>
+const base=location.origin+'/index.html';let ref=localStorage.getItem('reality_ref')||'REF'+Math.floor(Math.random()*1000000);localStorage.setItem('reality_ref',ref);let link=base+'?ref='+ref;document.getElementById('link').value=link;let c=localStorage.getItem('reality_invites')||0;document.getElementById('count').innerText='You have invited: '+c+' friends';function shareWA(){window.open('https://wa.me/?text='+encodeURIComponent('Join REALITY MALL - Buy & Sell & Post for FREE 🔥 '+link));let n=parseInt(c)+1;localStorage.setItem('reality_invites',n);document.getElementById('count').innerText='You have invited: '+n+' friends';}function shareLink(){navigator.clipboard.writeText(link);alert('Copied!');}
+</script>
+</body>
+</html>
