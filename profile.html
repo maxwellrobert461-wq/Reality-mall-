@@ -4,30 +4,147 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Profile - REALITY MALL</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>body{font-family:Arial;margin:0;background:#f5f5f5} .header{background:#000;color:#fff;padding:15px;display:flex;justify-content:space-between} .profile-card{background:#fff;padding:20px;text-align:center} .avatar{width:80px;height:80px;border-radius:50%;background:#000;color:#fff;font-size:40px;display:flex;align-items:center;justify-content:center;margin:0 auto} .product-card{background:#fff;margin:10px;padding:15px;border-radius:10px} .product-card img{width:100%;border-radius:10px;max-height:300px;object-fit:cover} .btn{padding:10px;background:#000;color:#fff;border:none;border-radius:8px;width:100%;margin-top:8px;font-weight:bold} .stats{display:flex;justify-content:space-around;margin:15px 0} .stat{font-weight:bold}</style>
+<style>
+body{font-family:Arial;margin:0;background:#f5f5f5}
+.header{background:#000;color:#fff;padding:12px 15px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:20}
+.profile-card{background:#fff;padding:20px;text-align:center}
+.avatar{width:110px;height:110px;border-radius:50%;background:#000;color:#fff;font-size:50px;display:flex;align-items:center;justify-content:center;margin:0 auto;border:4px solid #ffb400;object-fit:cover}
+.avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+.stats{display:flex;justify-content:space-around;margin:20px 0;background:#f9f9f9;padding:15px;border-radius:12px}
+.btn{padding:12px;background:#000;color:#fff;border:none;border-radius:8px;width:100%;margin-top:8px;font-weight:bold;cursor:pointer}
+.btn-green{background:#25D366}
+.review-box{background:#fff;margin:10px;padding:15px;border-radius:12px;border:1px solid #eee}
+.stars{font-size:22px;cursor:pointer;color:#ddd}
+.stars.active{color:#ffb400}
+.edit-box{background:#fffbe6;padding:15px;border-radius:12px;margin:15px;border:2px dashed #ffb400;display:none}
+input,textarea{width:100%;padding:10px;margin:6px 0;border-radius:8px;border:1px solid #ddd;box-sizing:border-box}
+.product-card{background:#fff;margin:10px;padding:15px;border-radius:12px}
+.product-card img{width:100%;border-radius:10px;max-height:350px;object-fit:cover}
+</style>
 </head>
 <body>
-<div class="header"><a href="index.html" style="color:#fff;text-decoration:none">← Mall</a><a href="dashboard.html" style="color:#fff;text-decoration:none;background:#fff;color:#000;padding:6px 12px;border-radius:20px">+ Post</a></div>
+<div class="header"><a href="index.html" style="color:#fff;text-decoration:none">← Mall</a><div style="display:flex;gap:8px"><button onclick="toggleEdit()" style="background:#fff;color:#000;padding:6px 12px;border-radius:20px;border:none;font-weight:bold">Edit</button><a href="dashboard.html" style="background:#333;color:#fff;padding:6px 12px;border-radius:20px;text-decoration:none">+ Post</a></div></div>
+
 <div class="profile-card">
-<div class="avatar" id="avatar">R</div>
-<h2 id="shopName">Loading...</h2>
-<p id="whatsapp"></p>
-<div class="stats"><div class="stat"><span id="postCount">0</span><br>Posts</div><div class="stat"><span id="viewCount">0</span><br>Views</div><div class="stat">⭐ 4.9<br>Rating</div></div>
-<a id="chatBtn" href="#"><button class="btn" style="background:#25D366">Chat on WhatsApp</button></a>
-<button class="btn" onclick="shareProfile()" style="background:#fff;color:#000;border:1px solid #000">Share Profile</button>
+<div class="avatar" id="avatarDiv" onclick="document.getElementById('picInput').click()"><span id="avatarText">R</span></div>
+<input type="file" id="picInput" accept="image/*" style="display:none" onchange="uploadPic(this)">
+<h2 id="shopName" style="margin:10px 0 2px">Loading...</h2>
+<p id="username" style="color:#666;margin:0;font-weight:bold">@username</p>
+<p id="bio" style="color:#444;font-size:14px;margin:5px 0"></p>
+<p id="whatsapp" style="color:#888;font-size:13px"></p>
+<div style="margin:5px 0" id="ratingStars">⭐ 4.9 (<span id="reviewCount">0</span> reviews)</div>
+<div class="stats">
+<div><b id="postCount">0</b><br>Posts</div><div><b id="viewCount">0</b><br>Views</div><div><b id="avgRating">4.9</b><br>Rating</div>
 </div>
-<div style="padding:10px"><h3>Products by this seller</h3><div id="products">Loading...</div></div>
+<a id="chatBtn" href="#"><button class="btn btn-green">💬 Chat on WhatsApp</button></a>
+<button class="btn" onclick="shareProfile()" style="background:#fff;color:#000;border:2px solid #000">🔗 Share Profile</button>
+</div>
+
+<div class="edit-box" id="editBox">
+<h3>✏️ Edit Your Profile</h3>
+<input id="editUsername" placeholder="@username e.g. @emeka_stores">
+<textarea id="editBio" placeholder="Bio - e.g. I sell shoes in Warri, Delivery nationwide"></textarea>
+<input id="editWhatsApp" placeholder="WhatsApp 234...">
+<button class="btn" onclick="saveProfile()">Save Profile + Picture</button>
+<p style="font-size:12px;color:#666">Click the circle above to add profile picture</p>
+</div>
+
+<div style="padding:15px">
+<h3>⭐ Customer Reviews</h3>
+<div id="reviews">Loading reviews...</div>
+<div class="review-box">
+<h4>Give 5 Star Review</h4>
+<div id="starPicker" style="font-size:30px"><span onclick="pickStar(1)">★</span><span onclick="pickStar(2)">★</span><span onclick="pickStar(3)">★</span><span onclick="pickStar(4)">★</span><span onclick="pickStar(5)">★</span></div>
+<input id="reviewerName" placeholder="Your name">
+<textarea id="reviewComment" placeholder="Write your review - e.g. Great seller, fast delivery!"></textarea>
+<button class="btn" onclick="submitReview()">Post Review ⭐</button>
+</div>
+
+<h3 style="margin-top:25px">Products by this seller</h3>
+<div id="products">Loading...</div>
+</div>
+
 <script>
-const SUPABASE_URL='https://trawtkndvzsplcmmtjox.supabase.co'; const SUPABASE_ANON_KEY='sb_publishable_ACkUQyZDMHThA7SYE1ME2w_HMNjyIXg'; const client=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-let shop=new URLSearchParams(location.search).get('shop'); if(!shop)shop=localStorage.getItem('myShop');
-async function load(){ if(!shop){document.getElementById('products').innerHTML='No shop found. Post something first! <a href="dashboard.html">Post Now</a>';return}
- document.getElementById('shopName').innerText=shop; document.getElementById('avatar').innerText=shop.charAt(0).toUpperCase();
+const SUPABASE_URL='https://trawtkndvzsplcmmtjox.supabase.co';
+const SUPABASE_ANON_KEY='sb_publishable_ACkUQyZDMHThA7SYE1ME2w_HMNjyIXg';
+const client=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+let shop=new URLSearchParams(location.search).get('shop');
+if(!shop)shop=localStorage.getItem('myShop');
+let currentRating=5;
+let profilePicUrl='';
+
+function toggleEdit(){document.getElementById('editBox').style.display=document.getElementById('editBox').style.display=='none'?'block':'none'}
+function pickStar(n){currentRating=n; const stars=document.querySelectorAll('#starPicker span'); stars.forEach((s,i)=>{s.style.color=i<n?'#ffb400':'#ddd'})}
+
+async function uploadPic(input){
+ if(!input.files[0])return;
+ const file=input.files[0];
+ document.getElementById('avatarText').innerText='...';
+ const fileName=`profile_${Date.now()}_${file.name}`;
+ const {error}=await client.storage.from('profile-pics').upload(fileName,file);
+ if(error){alert('Upload failed: '+error.message);return}
+ const {data}=client.storage.from('profile-pics').getPublicUrl(fileName);
+ profilePicUrl=data.publicUrl;
+ document.getElementById('avatarDiv').innerHTML=`<img src="${profilePicUrl}">`;
+ alert('Picture uploaded! Click Save Profile to save.');
+}
+
+async function load(){
+ if(!shop){document.getElementById('products').innerHTML='No shop found. Post first! <a href="dashboard.html">Post Now</a>';return}
+ document.getElementById('shopName').innerText=shop;
+ document.getElementById('avatarText').innerText=shop.charAt(0).toUpperCase();
+ // Load profile info
+ const {data:prof}=await client.from('profiles').select('*').eq('shop_name',shop).single();
+ if(prof){
+  if(prof.profile_pic){document.getElementById('avatarDiv').innerHTML=`<img src="${prof.profile_pic}">`; profilePicUrl=prof.profile_pic}
+  if(prof.username){document.getElementById('username').innerText='@'+prof.username; document.getElementById('editUsername').value=prof.username}
+  if(prof.bio){document.getElementById('bio').innerText=prof.bio; document.getElementById('editBio').value=prof.bio}
+  if(prof.whatsapp){document.getElementById('editWhatsApp').value=prof.whatsapp}
+ }
+ // Products
  const {data}=await client.from('products').select('*').eq('shop_name',shop).order('created_at',{ascending:false});
- if(!data||!data.length){document.getElementById('products').innerHTML='No posts yet';return}
- let totalViews=0; let wa=''; data.forEach(p=>{totalViews+=p.views||0; wa=p.whatsapp});
- document.getElementById('postCount').innerText=data.length; document.getElementById('viewCount').innerText=totalViews; document.getElementById('whatsapp').innerText='WhatsApp: '+wa; document.getElementById('chatBtn').href=`https://wa.me/${wa}`;
- let html=''; data.forEach(p=>{ html+=`<div class="product-card"><img src="${p.image}"><h4>${p.content||p.name}</h4><p>₦${(p.price||0).toLocaleString()} - ${p.views||0} views</p><a href="boost.html?id=${p.id}"><button class="btn">🚀 Boost</button></a></div>`; }); document.getElementById('products').innerHTML=html;
-} function shareProfile(){ let url=`https://realitymall.vercel.app/profile.html?shop=${encodeURIComponent(shop)}`; if(navigator.share){navigator.share({title:shop,url})}else{prompt('Copy profile link:',url)} } load();
+ if(data&&data.length){
+  let totalViews=0; let wa=''; data.forEach(p=>{totalViews+=p.views||0; wa=p.whatsapp});
+  document.getElementById('postCount').innerText=data.length;
+  document.getElementById('viewCount').innerText=totalViews.toLocaleString();
+  document.getElementById('whatsapp').innerText=wa?'WhatsApp: '+wa:'';
+  if(wa)document.getElementById('chatBtn').href=`https://wa.me/${wa}?text=Hi ${shop}, I saw your shop on REALITY MALL`;
+  let html=''; data.forEach(p=>{html+=`<div class="product-card"><img src="${p.image}"><h4>${p.content||p.name}</h4><p style="color:green;font-weight:bold">₦${(p.price||0).toLocaleString()}</p></div>`});
+  document.getElementById('products').innerHTML=html;
+ }
+ // Reviews
+ loadReviews();
+ pickStar(5);
+}
+
+async function saveProfile(){
+ const username=document.getElementById('editUsername').value.replace('@','').trim();
+ const bio=document.getElementById('editBio').value.trim();
+ const wa=document.getElementById('editWhatsApp').value.trim()||localStorage.getItem('myWhatsApp')||'';
+ if(!shop){alert('No shop');return}
+ const {error}=await client.from('profiles').upsert({shop_name:shop,username,bio,profile_pic:profilePicUrl,whatsapp:wa});
+ if(error){alert(error.message)}else{alert('Profile saved!'); location.reload()}
+}
+
+async function loadReviews(){
+ const {data}=await client.from('reviews').select('*').eq('shop_name',shop).order('created_at',{ascending:false});
+ if(!data||!data.length){document.getElementById('reviews').innerHTML='<p>No reviews yet. Be first to review!</p>'; return}
+ let sum=0; let html=''; data.forEach(r=>{sum+=r.rating; html+=`<div class="review-box"><b>${r.reviewer_name||'Customer'}</b> - ${'⭐'.repeat(r.rating)}<p style="margin:5px 0">${r.comment||''}</p><small style="color:#888">${new Date(r.created_at).toLocaleDateString()}</small></div>`});
+ document.getElementById('reviews').innerHTML=html;
+ document.getElementById('reviewCount').innerText=data.length;
+ document.getElementById('avgRating').innerText=(sum/data.length).toFixed(1);
+ document.getElementById('ratingStars').innerHTML=`${'⭐'.repeat(Math.round(sum/data.length))} ${ (sum/data.length).toFixed(1)} (${data.length} reviews)`;
+}
+
+async function submitReview(){
+ const name=document.getElementById('reviewerName').value.trim()||'Anonymous';
+ const comment=document.getElementById('reviewComment').value.trim();
+ if(!comment){alert('Write review');return}
+ const {error}=await client.from('reviews').insert([{shop_name:shop,reviewer_name:name,rating:currentRating,comment}]);
+ if(error){alert(error.message)}else{alert('Review posted! Thank you ⭐'); document.getElementById('reviewComment').value=''; loadReviews()}
+}
+load();
+function shareProfile(){let url=`https://realitymall.vercel.app/profile.html?shop=${encodeURIComponent(shop)}`; if(navigator.share){navigator.share({title:shop,url})}else{prompt('Copy shop link:',url)}}
 </script>
 </body>
 </html>
