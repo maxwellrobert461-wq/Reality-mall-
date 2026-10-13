@@ -20,4 +20,4 @@ function selectPlan(p,el){price=p; document.querySelectorAll('.box').forEach(b=>
 function payNow(){ if(!postId){alert('Go to homepage, click BOOST on your post');return} let msg=`Hi! I want to BOOST on REALITY MALL%0APost ID: ${postId}%0APlan: ₦${price}%0AI have paid, activate!`; window.open(`https://wa.me/2349078617514?text=${msg}`,'_blank'); localStorage.setItem('boost_'+postId, JSON.stringify({price,date:Date.now()})); alert('WhatsApp opened - Send proof!');}
 </script>
 </body>
-</html>
+</html> 
