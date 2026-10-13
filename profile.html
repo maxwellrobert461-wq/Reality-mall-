@@ -6,145 +6,93 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 body{font-family:Arial;margin:0;background:#f5f5f5}
-.header{background:#000;color:#fff;padding:12px 15px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:20}
+.header{background:#000;color:#fff;padding:12px 15px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0}
 .profile-card{background:#fff;padding:20px;text-align:center}
-.avatar{width:110px;height:110px;border-radius:50%;background:#000;color:#fff;font-size:50px;display:flex;align-items:center;justify-content:center;margin:0 auto;border:4px solid #ffb400;object-fit:cover}
-.avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover}
-.stats{display:flex;justify-content:space-around;margin:20px 0;background:#f9f9f9;padding:15px;border-radius:12px}
-.btn{padding:12px;background:#000;color:#fff;border:none;border-radius:8px;width:100%;margin-top:8px;font-weight:bold;cursor:pointer}
-.btn-green{background:#25D366}
-.review-box{background:#fff;margin:10px;padding:15px;border-radius:12px;border:1px solid #eee}
-.stars{font-size:22px;cursor:pointer;color:#ddd}
-.stars.active{color:#ffb400}
-.edit-box{background:#fffbe6;padding:15px;border-radius:12px;margin:15px;border:2px dashed #ffb400;display:none}
+.avatar{width:110px;height:110px;border-radius:50%;background:#000;color:#fff;font-size:50px;display:flex;align-items:center;justify-content:center;margin:0 auto;border:4px solid #ffb400;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.stats{display:flex;justify-content:space-around;margin:15px 0;background:#f9f9f9;padding:15px;border-radius:12px}
+.btn{padding:12px;background:#000;color:#fff;border:none;border-radius:8px;width:100%;margin-top:8px;font-weight:bold}
 input,textarea{width:100%;padding:10px;margin:6px 0;border-radius:8px;border:1px solid #ddd;box-sizing:border-box}
+.review-box{background:#fff;margin:10px 0;padding:12px;border-radius:10px;border-left:4px solid #ffb400}
 .product-card{background:#fff;margin:10px;padding:15px;border-radius:12px}
-.product-card img{width:100%;border-radius:10px;max-height:350px;object-fit:cover}
+.product-card img{width:100%;border-radius:10px}
 </style>
 </head>
 <body>
-<div class="header"><a href="index.html" style="color:#fff;text-decoration:none">← Mall</a><div style="display:flex;gap:8px"><button onclick="toggleEdit()" style="background:#fff;color:#000;padding:6px 12px;border-radius:20px;border:none;font-weight:bold">Edit</button><a href="dashboard.html" style="background:#333;color:#fff;padding:6px 12px;border-radius:20px;text-decoration:none">+ Post</a></div></div>
+<div class="header"><a href="index.html" style="color:#fff;text-decoration:none">← Mall</a><button onclick="document.getElementById('edit').style.display='block'" style="background:#fff;color:#000;padding:6px 12px;border-radius:20px;border:none;font-weight:bold">Edit Profile</button></div>
 
 <div class="profile-card">
-<div class="avatar" id="avatarDiv" onclick="document.getElementById('picInput').click()"><span id="avatarText">R</span></div>
-<input type="file" id="picInput" accept="image/*" style="display:none" onchange="uploadPic(this)">
-<h2 id="shopName" style="margin:10px 0 2px">Loading...</h2>
-<p id="username" style="color:#666;margin:0;font-weight:bold">@username</p>
-<p id="bio" style="color:#444;font-size:14px;margin:5px 0"></p>
-<p id="whatsapp" style="color:#888;font-size:13px"></p>
-<div style="margin:5px 0" id="ratingStars">⭐ 4.9 (<span id="reviewCount">0</span> reviews)</div>
-<div class="stats">
-<div><b id="postCount">0</b><br>Posts</div><div><b id="viewCount">0</b><br>Views</div><div><b id="avgRating">4.9</b><br>Rating</div>
-</div>
-<a id="chatBtn" href="#"><button class="btn btn-green">💬 Chat on WhatsApp</button></a>
-<button class="btn" onclick="shareProfile()" style="background:#fff;color:#000;border:2px solid #000">🔗 Share Profile</button>
-</div>
+<div class="avatar" id="avatar" onclick="document.getElementById('file').click()"><span id="txt">R</span></div>
+<input type="file" id="file" hidden accept="image/*" onchange="upload()">
+<h2 id="name">Loading...</h2>
+<p id="user" style="color:#666;font-weight:bold;margin:0">@username - Tap avatar to add picture</p>
+<p id="bio" style="color:#444;font-size:14px"></p>
+<div id="stars">⭐ 0 reviews</div>
+<div class="stats"><div><b id="posts">0</b><br>Posts</div><div><b id="views">0</b><br>Views</div><div><b id="rate">5.0</b><br>Rating</div></div>
+<a id="chat" href="#"><button class="btn" style="background:#25D366">💬 Chat on WhatsApp</button></a>
+<button class="btn" onclick="share()" style="background:#fff;color:#000;border:2px solid #000">🔗 Share Profile</button>
 
-<div class="edit-box" id="editBox">
-<h3>✏️ Edit Your Profile</h3>
-<input id="editUsername" placeholder="@username e.g. @emeka_stores">
-<textarea id="editBio" placeholder="Bio - e.g. I sell shoes in Warri, Delivery nationwide"></textarea>
-<input id="editWhatsApp" placeholder="WhatsApp 234...">
-<button class="btn" onclick="saveProfile()">Save Profile + Picture</button>
-<p style="font-size:12px;color:#666">Click the circle above to add profile picture</p>
+<div id="edit" style="display:none;background:#fffbe6;padding:15px;border-radius:12px;margin-top:15px;text-align:left">
+<h4>✏️ Edit Profile</h4>
+<input id="eUser" placeholder="Username e.g. emeka_stores (without @)">
+<textarea id="eBio" placeholder="Bio e.g. Best shoes in Warri"></textarea>
+<input id="eWa" placeholder="WhatsApp number">
+<button class="btn" onclick="save()">Save Profile</button>
+</div>
 </div>
 
 <div style="padding:15px">
-<h3>⭐ Customer Reviews</h3>
-<div id="reviews">Loading reviews...</div>
-<div class="review-box">
-<h4>Give 5 Star Review</h4>
-<div id="starPicker" style="font-size:30px"><span onclick="pickStar(1)">★</span><span onclick="pickStar(2)">★</span><span onclick="pickStar(3)">★</span><span onclick="pickStar(4)">★</span><span onclick="pickStar(5)">★</span></div>
-<input id="reviewerName" placeholder="Your name">
-<textarea id="reviewComment" placeholder="Write your review - e.g. Great seller, fast delivery!"></textarea>
-<button class="btn" onclick="submitReview()">Post Review ⭐</button>
+<h3>⭐ Reviews (Customers give you 5 stars)</h3>
+<div id="reviews">Loading...</div>
+<div class="review-box" style="border:2px dashed #ffb400">
+<div id="pick" style="font-size:32px"><span onclick="star(1)">★</span><span onclick="star(2)">★</span><span onclick="star(3)">★</span><span onclick="star(4)">★</span><span onclick="star(5)" style="color:#ffb400">★</span></div>
+<input id="rName" placeholder="Your name">
+<textarea id="rComment" placeholder="Great seller!"></textarea>
+<button class="btn" style="background:#ffb400;color:#000" onclick="postReview()">Post 5-Star Review ⭐</button>
 </div>
 
-<h3 style="margin-top:25px">Products by this seller</h3>
-<div id="products">Loading...</div>
+<h3>Products</h3>
+<div id="prods">Loading...</div>
 </div>
 
 <script>
-const SUPABASE_URL='https://trawtkndvzsplcmmtjox.supabase.co';
-const SUPABASE_ANON_KEY='sb_publishable_ACkUQyZDMHThA7SYE1ME2w_HMNjyIXg';
-const client=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-let shop=new URLSearchParams(location.search).get('shop');
-if(!shop)shop=localStorage.getItem('myShop');
-let currentRating=5;
-let profilePicUrl='';
-
-function toggleEdit(){document.getElementById('editBox').style.display=document.getElementById('editBox').style.display=='none'?'block':'none'}
-function pickStar(n){currentRating=n; const stars=document.querySelectorAll('#starPicker span'); stars.forEach((s,i)=>{s.style.color=i<n?'#ffb400':'#ddd'})}
-
-async function uploadPic(input){
- if(!input.files[0])return;
- const file=input.files[0];
- document.getElementById('avatarText').innerText='...';
- const fileName=`profile_${Date.now()}_${file.name}`;
- const {error}=await client.storage.from('profile-pics').upload(fileName,file);
- if(error){alert('Upload failed: '+error.message);return}
- const {data}=client.storage.from('profile-pics').getPublicUrl(fileName);
- profilePicUrl=data.publicUrl;
- document.getElementById('avatarDiv').innerHTML=`<img src="${profilePicUrl}">`;
- alert('Picture uploaded! Click Save Profile to save.');
-}
-
+const URL='https://trawtkndvzsplcmmtjox.supabase.co';
+const KEY='sb_publishable_ACkUQyZDMHThA7SYE1ME2w_HMNjyIXg';
+const client=supabase.createClient(URL,KEY);
+let shop=new URLSearchParams(location.search).get('shop')||localStorage.getItem('myShop');
+let sel=5; let pic='';
+function star(n){sel=n; document.querySelectorAll('#pick span').forEach((s,i)=>s.style.color=i<n?'#ffb400':'#ddd')}
 async function load(){
- if(!shop){document.getElementById('products').innerHTML='No shop found. Post first! <a href="dashboard.html">Post Now</a>';return}
- document.getElementById('shopName').innerText=shop;
- document.getElementById('avatarText').innerText=shop.charAt(0).toUpperCase();
- // Load profile info
- const {data:prof}=await client.from('profiles').select('*').eq('shop_name',shop).single();
- if(prof){
-  if(prof.profile_pic){document.getElementById('avatarDiv').innerHTML=`<img src="${prof.profile_pic}">`; profilePicUrl=prof.profile_pic}
-  if(prof.username){document.getElementById('username').innerText='@'+prof.username; document.getElementById('editUsername').value=prof.username}
-  if(prof.bio){document.getElementById('bio').innerText=prof.bio; document.getElementById('editBio').value=prof.bio}
-  if(prof.whatsapp){document.getElementById('editWhatsApp').value=prof.whatsapp}
- }
- // Products
- const {data}=await client.from('products').select('*').eq('shop_name',shop).order('created_at',{ascending:false});
- if(data&&data.length){
-  let totalViews=0; let wa=''; data.forEach(p=>{totalViews+=p.views||0; wa=p.whatsapp});
-  document.getElementById('postCount').innerText=data.length;
-  document.getElementById('viewCount').innerText=totalViews.toLocaleString();
-  document.getElementById('whatsapp').innerText=wa?'WhatsApp: '+wa:'';
-  if(wa)document.getElementById('chatBtn').href=`https://wa.me/${wa}?text=Hi ${shop}, I saw your shop on REALITY MALL`;
-  let html=''; data.forEach(p=>{html+=`<div class="product-card"><img src="${p.image}"><h4>${p.content||p.name}</h4><p style="color:green;font-weight:bold">₦${(p.price||0).toLocaleString()}</p></div>`});
-  document.getElementById('products').innerHTML=html;
- }
- // Reviews
- loadReviews();
- pickStar(5);
+ if(!shop){document.getElementById('prods').innerHTML='No shop - <a href="dashboard.html">Post Now</a>';return}
+ document.getElementById('name').innerText=shop; document.getElementById('txt').innerText=shop[0].toUpperCase();
+ try{ let {data:p}=await client.from('profiles').select('*').eq('shop_name',shop).maybeSingle(); if(p){ if(p.profile_pic){pic=p.profile_pic; document.getElementById('avatar').innerHTML=`<img src="${p.profile_pic}">`} if(p.username)document.getElementById('user').innerText='@'+p.username; if(p.bio)document.getElementById('bio').innerText=p.bio; document.getElementById('eUser').value=p.username||''; document.getElementById('eBio').value=p.bio||''; document.getElementById('eWa').value=p.whatsapp||'' } }catch(e){}
+ let {data}=await client.from('products').select('*').eq('shop_name',shop).order('created_at',{ascending:false});
+ if(data){ let v=0,wa=''; data.forEach(x=>{v+=x.views||0; wa=x.whatsapp}); document.getElementById('posts').innerText=data.length; document.getElementById('views').innerText=v; document.getElementById('chat').href=`https://wa.me/${wa}`; let h=''; data.forEach(p=>{h+=`<div class="product-card"><img src="${p.image}"><p>${p.content||''}</p><b>₦${(p.price||0).toLocaleString()}</b></div>`}); document.getElementById('prods').innerHTML=h; }
+ loadReviews(); star(5);
 }
-
-async function saveProfile(){
- const username=document.getElementById('editUsername').value.replace('@','').trim();
- const bio=document.getElementById('editBio').value.trim();
- const wa=document.getElementById('editWhatsApp').value.trim()||localStorage.getItem('myWhatsApp')||'';
- if(!shop){alert('No shop');return}
- const {error}=await client.from('profiles').upsert({shop_name:shop,username,bio,profile_pic:profilePicUrl,whatsapp:wa});
- if(error){alert(error.message)}else{alert('Profile saved!'); location.reload()}
+async function upload(){
+ let f=document.getElementById('file').files[0]; if(!f)return; document.getElementById('txt').innerText='...';
+ let name='profile_'+Date.now()+'_'+f.name;
+ let {error}=await client.storage.from('product-images').upload(name,f);
+ if(error){alert(error.message);return}
+ let {data}=client.storage.from('product-images').getPublicUrl(name); pic=data.publicUrl;
+ document.getElementById('avatar').innerHTML=`<img src="${pic}">`; alert('Picture uploaded! Now click Save Profile');
 }
-
+async function save(){
+ let u=document.getElementById('eUser').value.replace('@',''); let b=document.getElementById('eBio').value; let w=document.getElementById('eWa').value;
+ let {error}=await client.from('profiles').upsert({shop_name:shop,username:u,bio:b,profile_pic:pic,whatsapp:w});
+ if(error){alert('Error: '+error.message)}else{alert('Saved!'); location.reload()}
+}
 async function loadReviews(){
- const {data}=await client.from('reviews').select('*').eq('shop_name',shop).order('created_at',{ascending:false});
- if(!data||!data.length){document.getElementById('reviews').innerHTML='<p>No reviews yet. Be first to review!</p>'; return}
- let sum=0; let html=''; data.forEach(r=>{sum+=r.rating; html+=`<div class="review-box"><b>${r.reviewer_name||'Customer'}</b> - ${'⭐'.repeat(r.rating)}<p style="margin:5px 0">${r.comment||''}</p><small style="color:#888">${new Date(r.created_at).toLocaleDateString()}</small></div>`});
- document.getElementById('reviews').innerHTML=html;
- document.getElementById('reviewCount').innerText=data.length;
- document.getElementById('avgRating').innerText=(sum/data.length).toFixed(1);
- document.getElementById('ratingStars').innerHTML=`${'⭐'.repeat(Math.round(sum/data.length))} ${ (sum/data.length).toFixed(1)} (${data.length} reviews)`;
+ try{ let {data}=await client.from('reviews').select('*').eq('shop_name',shop).order('created_at',{ascending:false}); if(!data||!data.length){document.getElementById('reviews').innerHTML='<p>No reviews yet - Be first!</p>';return} let sum=0,h=''; data.forEach(r=>{sum+=r.rating; h+=`<div class="review-box"><b>${r.reviewer_name}</b> ${'⭐'.repeat(r.rating)}<p>${r.comment}</p><small>${new Date(r.created_at).toLocaleDateString()}</small></div>`}); document.getElementById('reviews').innerHTML=h; document.getElementById('rate').innerText=(sum/data.length).toFixed(1); document.getElementById('stars').innerText=`⭐ ${(sum/data.length).toFixed(1)} (${data.length} reviews)` }catch(e){document.getElementById('reviews').innerHTML='Reviews will show here'}
 }
-
-async function submitReview(){
- const name=document.getElementById('reviewerName').value.trim()||'Anonymous';
- const comment=document.getElementById('reviewComment').value.trim();
- if(!comment){alert('Write review');return}
- const {error}=await client.from('reviews').insert([{shop_name:shop,reviewer_name:name,rating:currentRating,comment}]);
- if(error){alert(error.message)}else{alert('Review posted! Thank you ⭐'); document.getElementById('reviewComment').value=''; loadReviews()}
+async function postReview(){
+ let n=document.getElementById('rName').value||'Customer'; let c=document.getElementById('rComment').value||'Great seller!'; if(!c){alert('Write comment');return}
+ let {error}=await client.from('reviews').insert({shop_name:shop,reviewer_name:n,rating:sel,comment:c});
+ if(error){alert(error.message)}else{alert('Review posted!'); loadReviews()}
 }
+function share(){ let u=`https://realitymall.vercel.app/profile.html?shop=${encodeURIComponent(shop)}`; prompt('Copy shop link:',u) }
 load();
-function shareProfile(){let url=`https://realitymall.vercel.app/profile.html?shop=${encodeURIComponent(shop)}`; if(navigator.share){navigator.share({title:shop,url})}else{prompt('Copy shop link:',url)}}
 </script>
 </body>
 </html>
