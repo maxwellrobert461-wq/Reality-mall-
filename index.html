@@ -11,13 +11,15 @@ body{font-family:Arial;margin:0;background:#fff}
 .feed-btn{padding:8px 18px;border-radius:20px;border:1px solid #ddd;background:#fff;font-weight:bold;cursor:pointer}
 .feed-btn.active{background:#000;color:#fff}
 .product-card{border-bottom:1px solid #eee;padding:15px}
-.product-card img{width:100%;border-radius:10px;max-height:400px;object-fit:cover}
+.product-card img,.product-card video{width:100%;border-radius:10px;max-height:400px;object-fit:cover}
 .price{color:green;font-weight:bold;font-size:18px}
 .btn{padding:10px 15px;background:#000;color:#fff;border:none;border-radius:8px;width:100%;margin-top:8px;font-weight:bold}
+.ad-box{background:#fffbe6;border:2px dashed #ffb400;padding:15px;text-align:center;border-radius:12px;margin:10px 0}
+.ad-box small{color:#888}
 </style>
 </head>
 <body>
-<div class="header"><h2 style="margin:0">REALITY.</h2><a href="dashboard.html" style="background:#fff;color:#000;padding:8px 15px;border-radius:20px;text-decoration:none;font-weight:bold">+ Post Free</a></div>
+<div class="header"><h2 style="margin:0">REALITY.</h2><div style="display:flex;gap:8px"><a href="invite.html" style="background:#25D366;color:#fff;padding:8px 12px;border-radius:20px;text-decoration:none;font-weight:bold">Invite</a><a href="dashboard.html" style="background:#fff;color:#000;padding:8px 15px;border-radius:20px;text-decoration:none;font-weight:bold">+ Post</a></div></div>
 <div class="feeds">
 <button class="feed-btn active" onclick="loadFeed('all',this)">Home</button>
 <button class="feed-btn" onclick="loadFeed('shops',this)">Shops</button>
@@ -26,31 +28,31 @@ body{font-family:Arial;margin:0;background:#fff}
 <button class="feed-btn" onclick="loadFeed('viral',this)">Viral 🔥</button>
 </div>
 <div id="products" style="padding:10px"><p>Loading REALITY MALL...</p></div>
-
 <script>
-const SUPABASE_URL = 'https://trawtkndvzsplcmmtjox.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_ACkUQyZDMHThA7SYE1ME2w_HMNjyIXg';
-const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-async function loadFeed(type, btn){
+const SUPABASE_URL='https://trawtkndvzsplcmmtjox.supabase.co';
+const SUPABASE_ANON_KEY='sb_publishable_ACkUQyZDMHThA7SYE1ME2w_HMNjyIXg';
+const client=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const ADS = [
+{title:"🔥 Advertise Your Business Here!", text:"Reach 10,000+ Warri customers. Pay ₦5k/week.", btn:"Chat to Advertise", link:"https://wa.me/2349078617514?text=Hi, I want to advertise on REALITY MALL"},
+{title:"💰 Make Money on Reality Mall", text:"Post products & get buyers on WhatsApp FREE!", btn:"Start Selling", link:"dashboard.html"}
+];
+async function loadFeed(type,btn){
  if(btn){document.querySelectorAll('.feed-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}
- let q = client.from('products').select('*').order('created_at',{ascending:false}).eq('status','approved');
- if(type==='shops') q=q.eq('feed_type','shops');
- if(type==='posts') q=q.eq('feed_type','posts');
- if(type==='video') q=q.eq('feed_type','video');
- if(type==='viral') q=q.order('views',{ascending:false});
- const {data,error} = await q;
- if(error){document.getElementById('products').innerHTML='<p>Error: '+error.message+'</p>';return}
- if(!data||data.length==0){document.getElementById('products').innerHTML='<p style="text-align:center;padding:50px">No products yet.<br>Be first to post!<br><br><a href="dashboard.html" style="background:#000;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none">+ Post Now</a></p>';return}
- document.getElementById('products').innerHTML=data.map(p=>`
-  <div class="product-card">
-    <img src="${p.image||''}" onerror="this.style.display='none'">
-    <h3>${p.name||'No name'}</h3>
-    <p>${p.shop_name||''} • ${p.views||0} views</p>
-    <p class="price">₦${(p.price||0).toLocaleString()}</p>
-    <a href="https://wa.me/${p.whatsapp}?text=Hi, I want ${p.name} from REALITY MALL" target="_blank"><button class="btn">Chat on WhatsApp</button></a>
-  </div>
- `).join('');
+ let q=client.from('products').select('*').order('created_at',{ascending:false}).eq('status','approved');
+ if(type==='shops')q=q.eq('feed_type','shops'); if(type==='posts')q=q.eq('feed_type','posts'); if(type==='video')q=q.eq('feed_type','video'); if(type==='viral')q=q.order('views',{ascending:false});
+ const {data,error}=await q; 
+ if(!data||!data.length){document.getElementById('products').innerHTML='<p style="text-align:center;padding:50px">No products yet.<br>Be first to post!<br><br><a href="dashboard.html" style="background:#000;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none">+ Post Now</a></p>';return}
+ let html=''; data.forEach((p,i)=>{
+  if(i>0 && i%10===0){
+   const ad=ADS[Math.floor(Math.random()*ADS.length)];
+   html+=`<div class="ad-box"><small>SPONSORED AD</small><h3>${ad.title}</h3><p>${ad.text}</p><a href="${ad.link}"><button class="btn" style="background:#ffb400;color:#000">${ad.btn}</button></a></div>`;
+  }
+  const isVideo=p.image&&p.image.includes('.mp4')||p.feed_type==='video';
+  const media=isVideo?`<video src="${p.image}" controls></video>`:`<img src="${p.image||''}">`;
+  const price=p.feed_type==='shops'?`<p class="price">₦${(p.price||0).toLocaleString()}</p>`:'';
+  html+=`<div class="product-card">${media}<h3>${p.shop_name||''}</h3><p>${p.content||p.name||''}</p>${price}<p>${p.views||0} views</p><a href="https://wa.me/${p.whatsapp}?text=Hi, I saw ${p.name||'your post'} on REALITY MALL" target="_blank"><button class="btn">Chat on WhatsApp</button></a></div>`;
+ });
+ document.getElementById('products').innerHTML=html;
 }
 loadFeed('all');
 </script>
