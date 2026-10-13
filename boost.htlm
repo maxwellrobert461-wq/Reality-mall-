@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Boost - REALITY MALL</title>
+<style>body{font-family:Arial;padding:15px;background:#f5f5f5}.box{background:#fff;padding:20px;border-radius:12px;margin-bottom:15px;border:2px solid #eee} .box.active{border-color:#000;background:#fffbe6} button{width:100%;padding:14px;background:#000;color:#fff;border:none;border-radius:8px;font-weight:bold;margin-top:10px} .price{font-size:24px;font-weight:bold;color:green}</style>
+</head>
+<body>
+<h2>🚀 Boost Your Post</h2>
+<a href="index.html">← Back to Mall</a>
+<div id="postInfo" style="background:#fff;padding:15px;border-radius:10px;margin:15px 0"></div>
+
+<div class="box" onclick="selectPlan(1000,this)"><h3>🌟 Basic</h3><p class="price">₦1,000</p><p>✅ 400 people will see<br>✅ 24 hours top</p></div>
+<div class="box" onclick="selectPlan(3000,this)"><h3>🔥 Popular</h3><p class="price">₦3,000</p><p>✅ 1,500 people will see<br>✅ 3 days top<br>✅ BOOSTED badge</p></div>
+<div class="box active" onclick="selectPlan(5000,this)"><h3>💎 Unlimited - 7 Days</h3><p class="price">₦5,000</p><p>✅ Unlimited views for 7 days<br>✅ Always on top + Verified badge</p></div>
+
+<button onclick="payNow()">Pay & Boost Now</button>
+<script>
+let price=5000; let postId=new URLSearchParams(location.search).get('id');
+document.getElementById('postInfo').innerHTML=postId?`Boosting Post: <b>${postId}</b><br>Your post will be on TOP`:'Go back and click BOOST on your post';
+function selectPlan(p,el){price=p; document.querySelectorAll('.box').forEach(b=>b.classList.remove('active')); el.classList.add('active');}
+function payNow(){ if(!postId){alert('Go to homepage, click BOOST on your post');return} let msg=`Hi! I want to BOOST on REALITY MALL%0APost ID: ${postId}%0APlan: ₦${price}%0AI have paid, activate!`; window.open(`https://wa.me/2349078617514?text=${msg}`,'_blank'); localStorage.setItem('boost_'+postId, JSON.stringify({price,date:Date.now()})); alert('WhatsApp opened - Send proof!');}
+</script>
+</body>
+</html>
