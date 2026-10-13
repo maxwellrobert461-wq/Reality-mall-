@@ -1,81 +1,58 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>REALITY MALL - 5 Feeds + Save</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>REALITY MALL</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://js.paystack.co/v1/inline.js"></script>
-<style>.active-tab{background:black;color:white}</style>
+<style>
+body{font-family:Arial;margin:0;background:#fff}
+.header{background:#000;color:#fff;padding:12px 15px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
+.feeds{display:flex;gap:8px;padding:10px;overflow:auto;white-space:nowrap;border-bottom:1px solid #eee;position:sticky;top:54px;background:#fff}
+.feed-btn{padding:8px 18px;border-radius:20px;border:1px solid #ddd;background:#fff;font-weight:bold;cursor:pointer}
+.feed-btn.active{background:#000;color:#fff}
+.product-card{border-bottom:1px solid #eee;padding:15px}
+.product-card img{width:100%;border-radius:10px;max-height:400px;object-fit:cover}
+.price{color:green;font-weight:bold;font-size:18px}
+.btn{padding:10px 15px;background:#000;color:#fff;border:none;border-radius:8px;width:100%;margin-top:8px;font-weight:bold}
+</style>
 </head>
-<body class="bg-[#f8f8f6]">
-<nav class="flex justify-between p-4 bg-black text-white sticky top-0 z-30">
-<b class="text-xl">REALITY.</b>
-<div class="flex gap-2">
-<a href="#" onclick="setFeed('saved')" class="bg-zinc-800 px-3 py-1.5 rounded-full text-xs">❤️ Saved (<span id="savedCount">0</span>)</a>
-<a href="dashboard.html" class="bg-white text-black px-4 py-1.5 rounded-full font-bold text-xs">+ Post Free</a>
+<body>
+<div class="header"><h2 style="margin:0">REALITY.</h2><a href="dashboard.html" style="background:#fff;color:#000;padding:8px 15px;border-radius:20px;text-decoration:none;font-weight:bold">+ Post Free</a></div>
+<div class="feeds">
+<button class="feed-btn active" onclick="loadFeed('all',this)">Home</button>
+<button class="feed-btn" onclick="loadFeed('shops',this)">Shops</button>
+<button class="feed-btn" onclick="loadFeed('posts',this)">Posts</button>
+<button class="feed-btn" onclick="loadFeed('video',this)">Video</button>
+<button class="feed-btn" onclick="loadFeed('viral',this)">Viral 🔥</button>
 </div>
-</nav>
-<div class="sticky top-[56px] bg-white border-b z-20 flex gap-2 p-3 overflow-x-auto">
-<button onclick="setFeed('home')" id="tab-home" class="active-tab px-5 py-2 rounded-full border text-xs font-black">Home</button>
-<button onclick="setFeed('shops')" id="tab-shops" class="px-5 py-2 rounded-full border text-xs font-black">Shops</button>
-<button onclick="setFeed('posts')" id="tab-posts" class="px-5 py-2 rounded-full border text-xs font-black">Posts</button>
-<button onclick="setFeed('video')" id="tab-video" class="px-5 py-2 rounded-full border text-xs font-black">Video</button>
-<button onclick="setFeed('photos')" id="tab-photos" class="px-5 py-2 rounded-full border text-xs font-black">Photos</button>
-<button onclick="setFeed('saved')" id="tab-saved" class="px-5 py-2 rounded-full border text-xs font-black">❤️ Saved</button>
-</div>
-<div id="feed" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 max-w-6xl mx-auto">Loading REALITY MALL...</div>
-<div id="paywall" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-6">
-<div class="bg-white rounded-[25px] p-6 max-w-sm w-full">
-<h2 class="text-xl font-black">🚀 Hit 1k Free Views!</h2>
-<p class="text-xs mt-2">Free posts stop at 1,000 people. Pay to unlock viral for 30 days. Money goes to 9078617514</p>
-<div class="mt-3 space-y-2">
-<button onclick="payWithPaystack('starter')" class="w-full bg-zinc-100 p-3 rounded-xl text-left text-xs font-bold">Starter ₦2,000 - 10k views</button>
-<button onclick="payWithPaystack('pro')" class="w-full bg-yellow-300 p-3 rounded-xl text-left text-xs font-bold">Pro ₦5,000 - 50k views - VIRAL</button>
-<button onclick="payWithPaystack('elite')" class="w-full bg-green-500 text-white p-3 rounded-xl text-left text-xs font-bold">Elite ₦10,000 - Unlimited + TOP</button>
-</div>
-<div class="mt-3 bg-zinc-100 p-3 rounded-xl text-[10px]">Or transfer: Moniepoint/Opay 9078617514 Odera Chidalu Vitalis. Send proof to WhatsApp.</div>
-<button onclick="document.getElementById('paywall').classList.add('hidden')" class="w-full mt-3 text-xs">Close</button>
-</div>
-</div>
+<div id="products" style="padding:10px"><p>Loading REALITY MALL...</p></div>
+
 <script>
-const SUPA_URL='https://trawtkndvzsplcmmtjox.supabase.co';
-const SUPA_KEY='sb_publishable_ACkUQyZDMHThA7SYE1ME2w_HMNjyIXg';
-const PAYSTACK_KEY='pk_live_16a8e4130e54cdbd8eb5a693ae37a52d874e3ee0';
-const supabase=window.supabase.createClient(SUPA_URL,SUPA_KEY);
-let currentFeed='home'; let currentPayId='';
-function getSaved(){return JSON.parse(localStorage.getItem('reality_saved')||'[]')}
-function isSaved(id){return getSaved().includes(id)}
-function toggleSave(id){let s=getSaved(); if(s.includes(id)) s=s.filter(x=>x!==id); else s.push(id); localStorage.setItem('reality_saved',JSON.stringify(s)); document.getElementById('savedCount').innerText=s.length; load();}
-function setFeed(f){currentFeed=f; document.querySelectorAll('[id^=tab-]').forEach(b=>b.classList.remove('active-tab')); document.getElementById('tab-'+f)?.classList.add('active-tab'); load();}
-async function load(){
- document.getElementById('savedCount').innerText=getSaved().length;
- let now=new Date().toISOString();
- let {data,error}=await supabase.from('products').select('*').eq('status','approved').gt('expires_at',now).order('viral_score',{ascending:false}).limit(100);
- let div=document.getElementById('feed');
- if(error||!data){div.innerHTML='<p class="p-10 text-center text-xs">Run SQL in Supabase SQL Editor first. Error: '+(error?.message||'')+'</p>'; return;}
- let filtered=data;
- if(currentFeed!=='home'&&currentFeed!=='saved'){filtered=data.filter(p=>{if(currentFeed==='shops') return p.feed_type==='shops'; if(currentFeed==='posts') return p.feed_type==='posts'; if(currentFeed==='video') return p.media_type==='video'; if(currentFeed==='photos') return p.media_type==='photo'; return true;});}
- if(currentFeed==='saved'){let saved=getSaved(); filtered=data.filter(p=>saved.includes(p.id)); if(filtered.length==0){div.innerHTML='<p class="col-span-3 text-center py-20 text-sm">No saved yet. Tap 🤍 Save on any product to see it anytime later, even offline.</p>'; return;}}
- else{filtered=filtered.filter(p=>p.is_paid||(p.views||0)<1000);}
- if(filtered.length==0){div.innerHTML=`<p class="col-span-3 text-center py-20 text-sm">No ${currentFeed} yet. Be first! Free 1k views then pay monthly ₦2k/₦5k/₦10k to 9078617514</p>`; return;}
- div.innerHTML='';
- filtered.forEach(p=>{
-  let days=Math.ceil((new Date(p.expires_at)-new Date())/86400000);
-  let viewText=!p.is_paid?`${p.views||0}/1000 free views`:`${p.views||0} viral views • ${days}d left`;
-  let savedIcon=isSaved(p.id)?'❤️ Saved':'🤍 Save';
-  let payBtn=!p.is_paid?`<button onclick="openPaywall('${p.id}')" class="w-full bg-yellow-400 text-black p-2 rounded-full text-xs font-black mt-2">🔓 Pay to Unlock Beyond 1k - 30 days</button>`:'';
-  let media=p.media_type==='video'?`<video src="${p.image}" class="w-full h-64 object-cover rounded-xl mt-2" controls></video>`:`<img src="${p.image}" class="w-full h-64 object-cover rounded-xl mt-2">`;
-  div.innerHTML+=`<div class="bg-white p-4 rounded-[20px] border"><div class="flex justify-between text-[9px] font-bold"><span class="uppercase">${p.feed_type} • ${p.plan||'free'}</span><span>${viewText}</span></div>${media}<p class="text-xs mt-2">${p.content||''}</p><p class="font-bold text-sm mt-1">${p.name||''}</p><p class="text-xs text-zinc-500">${p.shop_name||''}</p>${p.price?`<p class="font-black">₦${p.price}</p>`:''}<div class="flex gap-2 mt-2"><button onclick="toggleSave('${p.id}')" class="flex-1 bg-zinc-100 p-2 rounded-full text-xs font-bold">${savedIcon}</button><a href="https://wa.me/${p.whatsapp||'2349078617514'}" class="flex-1 bg-black text-white text-center p-2 rounded-full text-xs">Buy on WhatsApp</a></div>${payBtn}</div>`;
-  if(currentFeed!=='saved') supabase.rpc('increment_views',{prod_id:p.id});
- });
+const SUPABASE_URL = 'https://trawtkndvzsplcmmtjox.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_ACkUQyZDMHThA7SYE1ME2w_HMNjyIXg';
+const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+async function loadFeed(type, btn){
+ if(btn){document.querySelectorAll('.feed-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}
+ let q = client.from('products').select('*').order('created_at',{ascending:false}).eq('status','approved');
+ if(type==='shops') q=q.eq('feed_type','shops');
+ if(type==='posts') q=q.eq('feed_type','posts');
+ if(type==='video') q=q.eq('feed_type','video');
+ if(type==='viral') q=q.order('views',{ascending:false});
+ const {data,error} = await q;
+ if(error){document.getElementById('products').innerHTML='<p>Error: '+error.message+'</p>';return}
+ if(!data||data.length==0){document.getElementById('products').innerHTML='<p style="text-align:center;padding:50px">No products yet.<br>Be first to post!<br><br><a href="dashboard.html" style="background:#000;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none">+ Post Now</a></p>';return}
+ document.getElementById('products').innerHTML=data.map(p=>`
+  <div class="product-card">
+    <img src="${p.image||''}" onerror="this.style.display='none'">
+    <h3>${p.name||'No name'}</h3>
+    <p>${p.shop_name||''} • ${p.views||0} views</p>
+    <p class="price">₦${(p.price||0).toLocaleString()}</p>
+    <a href="https://wa.me/${p.whatsapp}?text=Hi, I want ${p.name} from REALITY MALL" target="_blank"><button class="btn">Chat on WhatsApp</button></a>
+  </div>
+ `).join('');
 }
-function openPaywall(id){currentPayId=id; document.getElementById('paywall').classList.remove('hidden');}
-function payWithPaystack(plan){
- let amounts={starter:2000,pro:5000,elite:10000};
- let handler=PaystackPop.setup({key:PAYSTACK_KEY,email:'buyer@reality.com',amount:amounts[plan]*100,currency:'NGN',ref:''+Math.floor(Math.random()*1000000000+1),callback:function(res){supabase.from('products').update({is_paid:true,plan:plan,viral_score:plan==='elite'?3:plan==='pro'?2:1,expires_at:new Date(Date.now()+30*24*60*60*1000).toISOString()}).eq('id',currentPayId).then(()=>{alert('Payment success! Viral for 30 days. Check 9078617514 balance.'); document.getElementById('paywall').classList.add('hidden'); load();}); window.open(`https://wa.me/2349078617514?text=Paystack paid ${plan} for post ${currentPayId} ref ${res.reference}`,'_blank');},onClose:function(){}}); handler.openIframe();
-}
-load();
+loadFeed('all');
 </script>
 </body>
 </html>
