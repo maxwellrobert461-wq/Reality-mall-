@@ -1,88 +1,55 @@
 <!DOCTYPE html>
 <html>
-<head><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Post Free - REALITY MALL</title><script src="https://cdn.tailwindcss.com"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://js.paystack.co/v1/inline.js"></script></head>
-<body class="bg-zinc-50 p-4">
-<h1 class="text-2xl font-black">Post Free to REALITY</h1><p class="text-xs">Free 1k views, pay monthly ₦2k/₦5k/₦10k to 9078617514 to go viral. Upload from phone.</p>
-<div class="bg-white p-5 rounded-2xl mt-4 max-w-xl">
-<input id="shop" placeholder="Shop Name e.g Mama Gold Store" class="w-full p-3 bg-zinc-100 rounded-xl">
-<input id="name" placeholder="Product Name e.g Rice Bag" class="w-full mt-3 p-3 bg-zinc-100 rounded-xl">
-<input id="price" type="number" placeholder="Price ₦ e.g 5000" class="w-full mt-3 p-3 bg-zinc-100 rounded-xl">
-<select id="feed_type" class="w-full mt-3 p-3 bg-zinc-100 rounded-xl font-bold"><option value="shops">📦 Shops - To Sell</option><option value="posts">📝 Posts - Caption</option><option value="video">🎥 Video - Reels</option><option value="photos">📸 Photos - Gallery</option></select>
-<textarea id="content" placeholder="Write caption e.g Market day today! New stock..." class="w-full mt-3 p-3 bg-zinc-100 rounded-xl"></textarea>
-<p class="text-xs mt-3 font-bold">Upload Photo/Video from Phone Gallery:</p><input id="file" type="file" accept="image/*,video/*" class="w-full mt-2 p-3 bg-zinc-100 rounded-xl"><p id="status" class="text-xs text-green-600 mt-1"></p>
-<input id="wa" placeholder="WhatsApp number e.g 2349078617514" class="w-full mt-3 p-3 bg-zinc-100 rounded-xl">
-<button onclick="postFree()" id="btn" class="w-full bg-black text-white p-3 rounded-full mt-4 font-bold">Post Free Now (1k free views)</button>
-</div>
-<div id="pay" class="hidden bg-white p-5 rounded-2xl mt-4 max-w-xl border-2 border-black">
-<h2 class="font-black">✅ Your Post is LIVE! Want more than 1k views?</h2>
-<p class="text-xs mt-1">Your post will disappear after 1k people see it. Pay to go viral for 30 days monthly.</p>
-<div class="grid grid-cols-3 gap-2 mt-3">
-<button onclick="payNow('starter')" class="bg-zinc-100 p-3 rounded-xl text-xs font-bold">Starter ₦2k - 10k views</button>
-<button onclick="payNow('pro')" class="bg-yellow-300 p-3 rounded-xl text-xs font-bold">Pro ₦5k - 50k Viral</button>
-<button onclick="payNow('elite')" class="bg-black text-white p-3 rounded-xl text-xs font-bold">Elite ₦10k - Unlimited TOP</button>
-</div>
-<div class="mt-3 bg-blue-50 p-3 rounded-xl text-xs">Or transfer: Moniepoint/Opay 9078617514 Odera Chidalu Vitalis<br>After transfer <a href="https://wa.me/2349078617514" class="font-bold underline">Send proof on WhatsApp</a></div>
-<a href="index.html" class="block text-center text-xs mt-3 underline">Go to Home - See your post LIVE</a>
-</div>
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Post - REALITY MALL</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>body{font-family:Arial;padding:15px;background:#f5f5f5}input,select,textarea{width:100%;padding:12px;margin:8px 0;border:1px solid #ddd;border-radius:8px;box-sizing:border-box}button{width:100%;padding:14px;background:#000;color:#fff;border:none;border-radius:8px;font-weight:bold;font-size:16px;margin-top:10px}</style>
+</head>
+<body>
+<h2>REALITY. - Post Product</h2>
+<a href="index.html">← Back to Mall</a><br><br>
+
+<input type="text" id="shop_name" placeholder="Your Shop Name">
+<input type="text" id="name" placeholder="Product Name e.g. iPhone 13">
+<input type="number" id="price" placeholder="Price e.g. 500000">
+<input type="text" id="whatsapp" placeholder="Your WhatsApp Number e.g. 2349078617514">
+<select id="feed_type"><option value="shops">Shops Feed</option><option value="posts">Posts Feed</option><option value="video">Video Feed</option></select>
+<input type="file" id="imageFile" accept="image/*">
+<textarea id="content" placeholder="Description"></textarea>
+<button onclick="postNow()" id="btn">POST FREE - Publish Now</button>
+<p id="status"></p>
+
 <script>
-const SUPA_URL='https://trawtkndvzsplcmmtjox.supabase.co';
-const SUPA_KEY='sb_publishable_ACkUQyZDMHThA7SYE1ME2w_HMNjyIXg';
-const PAYSTACK_KEY='pk_live_16a8e4130e54cdbd8eb5a693ae37a52d874e3ee0';
-const supabase=window.supabase.createClient(SUPA_URL,SUPA_KEY);
-let uploadedUrl=''; let mediaType='photo'; let lastId='';
-document.getElementById('file').addEventListener('change',async e=>{
- let file=e.target.files[0]; if(!file) return;
- document.getElementById('status').innerText='Uploading...';
- mediaType=file.type.startsWith('video')?'video':'photo';
- let name=Date.now()+'_'+file.name;
- let {error}=await supabase.storage.from('reality-media').upload(name,file);
- if(error){document.getElementById('status').innerText=error.message; return;}
- let {data}=supabase.storage.from('reality-media').getPublicUrl(name);
- uploadedUrl=data.publicUrl;
- document.getElementById('status').innerText='✅ Uploaded! '+uploadedUrl.substring(0,30)+'...';
-});
-async function postFree(){
- if(!uploadedUrl) return alert('Please upload photo/video from phone first');
- if(!shop.value||!name.value) return alert('Fill shop and product name');
- let cur={
-  shop_name:shop.value,
-  name:name.value,
-  price:parseInt(price.value)||0,
-  image:uploadedUrl,
-  whatsapp:wa.value||'2349078617514',
-  plan:'free',
-  viral_score:0,
-  status:'approved',
-  views:0,
-  is_paid:false,
-  feed_type:feed_type.value,
-  content:content.value,
-  media_type:mediaType,
-  expires_at:new Date(Date.now()+7*24*60*60*1000).toISOString()
- };
- let {data,error}=await supabase.from('products').insert([cur]).select();
- if(error) return alert('Error: '+error.message);
- lastId=data[0].id;
- document.getElementById('pay').classList.remove('hidden');
- alert('Posted FREE! Your post is LIVE now. Only 1000 people will see it. Pay to go beyond.');
-}
-function payNow(plan){
- let amounts={starter:2000,pro:5000,elite:10000};
- let handler=PaystackPop.setup({
-  key:PAYSTACK_KEY,
-  email:'seller@reality.com',
-  amount:amounts[plan]*100,
-  currency:'NGN',
-  ref:''+Math.floor(Math.random()*1000000000+1),
-  callback:function(r){
-   supabase.from('products').update({is_paid:true,plan:plan,viral_score:plan==='elite'?3:2,expires_at:new Date(Date.now()+30*24*60*60*1000).toISOString()}).eq('id',lastId).then(()=>{
-    alert('Paid! Now viral for 30 days. Money to 9078617514');
-    location.href='index.html';
-   });
-  },
-  onClose:function(){}
- });
- handler.openIframe();
+const SUPABASE_URL = 'https://trawtkndvzsplcmmtjox.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_ACkUQyZDMHThA7SYE1ME2w_HMNjyIXg';
+const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+async function postNow(){
+ const btn=document.getElementById('btn'); const s=document.getElementById('status');
+ const shop_name=document.getElementById('shop_name').value; const name=document.getElementById('name').value;
+ const price=document.getElementById('price').value; const whatsapp=document.getElementById('whatsapp').value;
+ const feed_type=document.getElementById('feed_type').value; const content=document.getElementById('content').value;
+ const file=document.getElementById('imageFile').files[0];
+ if(!name||!price||!whatsapp||!file){alert('Fill name, price, whatsapp and image');return}
+ btn.innerText='Uploading...'; btn.disabled=true; s.innerText='Uploading image...';
+ try{
+  const fileName = Date.now()+'_'+file.name.replace(/[^a-z0-9.]/gi,'_');
+  const {error:upErr} = await client.storage.from('reality-media').upload(fileName, file, {upsert:true});
+  if(upErr) throw upErr;
+  const {data:pub} = client.storage.from('reality-media').getPublicUrl(fileName);
+  const imageUrl = pub.publicUrl;
+  s.innerText='Saving product...';
+  const {error:insErr} = await client.from('products').insert([{
+    shop_name, name, price: parseInt(price), whatsapp, feed_type, content, image: imageUrl, status:'approved', views:0
+  }]);
+  if(insErr) throw insErr;
+  s.innerText='✅ SUCCESS! Posted! Go to Home';
+  alert('Posted! Check homepage'); window.location.href='index.html';
+ }catch(e){
+  s.innerText='❌ Error: '+e.message; btn.innerText='POST FREE - Publish Now'; btn.disabled=false;
+  if(e.message.includes('Bucket not found')) alert('Go to Supabase > Storage > New Bucket > reality-media > Public ON > Create');
+ }
 }
 </script>
 </body>
