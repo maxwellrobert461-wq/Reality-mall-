@@ -4,53 +4,71 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Post - REALITY MALL</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>body{font-family:Arial;padding:15px;background:#f5f5f5}input,select,textarea{width:100%;padding:12px;margin:8px 0;border:1px solid #ddd;border-radius:8px;box-sizing:border-box}button{width:100%;padding:14px;background:#000;color:#fff;border:none;border-radius:8px;font-weight:bold;font-size:16px;margin-top:10px}</style>
+<style>body{font-family:Arial;padding:15px;background:#f5f5f5}input,select,textarea{width:100%;padding:12px;margin:8px 0;border:1px solid #ddd;border-radius:8px;box-sizing:border-box}button{width:100%;padding:14px;background:#000;color:#fff;border:none;border-radius:8px;font-weight:bold;font-size:16px;margin-top:10px}.box{background:#fff;padding:15px;border-radius:12px}</style>
 </head>
 <body>
-<h2>REALITY. - Post Product</h2>
+<div class="box">
+<h2>REALITY. - What do you want to post?</h2>
 <a href="index.html">← Back to Mall</a><br><br>
 
-<input type="text" id="shop_name" placeholder="Your Shop Name">
+<label>Choose where to post:</label>
+<select id="feed_type" onchange="changeType()">
+<option value="shops">🛍️ SHOPS - Sell Product (Needs Price)</option>
+<option value="posts">🖼️ POSTS - Picture + Caption</option>
+<option value="video">🎥 VIDEO - Video + Caption</option>
+</select>
+
+<input type="text" id="shop_name" placeholder="Your Name / Shop Name">
+<div id="shopFields">
 <input type="text" id="name" placeholder="Product Name e.g. iPhone 13">
 <input type="number" id="price" placeholder="Price e.g. 500000">
-<input type="text" id="whatsapp" placeholder="Your WhatsApp Number e.g. 2349078617514">
-<select id="feed_type"><option value="shops">Shops Feed</option><option value="posts">Posts Feed</option><option value="video">Video Feed</option></select>
-<input type="file" id="imageFile" accept="image/*">
-<textarea id="content" placeholder="Description"></textarea>
-<button onclick="postNow()" id="btn">POST FREE - Publish Now</button>
+</div>
+
+<input type="text" id="whatsapp" placeholder="Your WhatsApp e.g. 2349078617514">
+<input type="file" id="imageFile" accept="image/*,video/*">
+<textarea id="content" rows="4" placeholder="What's on your mind? Write caption here..."></textarea>
+
+<button onclick="postNow()" id="btn">POST NOW</button>
 <p id="status"></p>
+</div>
 
 <script>
 const SUPABASE_URL = 'https://trawtkndvzsplcmmtjox.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_ACkUQyZDMHThA7SYE1ME2w_HMNjyIXg';
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+function changeType(){
+ const type=document.getElementById('feed_type').value;
+ if(type==='shops'){document.getElementById('shopFields').style.display='block'; document.getElementById('content').placeholder="Describe your product...";}
+ else {document.getElementById('shopFields').style.display='none'; document.getElementById('content').placeholder="What's on your mind? 😊 Write caption here...";}
+}
 async function postNow(){
  const btn=document.getElementById('btn'); const s=document.getElementById('status');
- const shop_name=document.getElementById('shop_name').value; const name=document.getElementById('name').value;
- const price=document.getElementById('price').value; const whatsapp=document.getElementById('whatsapp').value;
- const feed_type=document.getElementById('feed_type').value; const content=document.getElementById('content').value;
+ const feed_type=document.getElementById('feed_type').value;
+ const shop_name=document.getElementById('shop_name').value||'Reality User';
+ const name=document.getElementById('name').value||'Post';
+ const price=document.getElementById('price').value||0;
+ const whatsapp=document.getElementById('whatsapp').value;
+ const content=document.getElementById('content').value;
  const file=document.getElementById('imageFile').files[0];
- if(!name||!price||!whatsapp||!file){alert('Fill name, price, whatsapp and image');return}
- btn.innerText='Uploading...'; btn.disabled=true; s.innerText='Uploading image...';
+ if(!whatsapp){alert('Enter WhatsApp number');return}
+ if(!file){alert('Choose picture or video');return}
+ btn.innerText='Posting...'; btn.disabled=true; s.innerText='Uploading...';
  try{
   const fileName = Date.now()+'_'+file.name.replace(/[^a-z0-9.]/gi,'_');
   const {error:upErr} = await client.storage.from('reality-media').upload(fileName, file, {upsert:true});
   if(upErr) throw upErr;
   const {data:pub} = client.storage.from('reality-media').getPublicUrl(fileName);
   const imageUrl = pub.publicUrl;
-  s.innerText='Saving product...';
+  s.innerText='Saving...';
   const {error:insErr} = await client.from('products').insert([{
-    shop_name, name, price: parseInt(price), whatsapp, feed_type, content, image: imageUrl, status:'approved', views:0
+    shop_name, name: feed_type==='shops'?name:content.substring(0,50), price: parseInt(price)||0, whatsapp, feed_type, content, image: imageUrl, status:'approved', views:0
   }]);
   if(insErr) throw insErr;
-  s.innerText='✅ SUCCESS! Posted! Go to Home';
-  alert('Posted! Check homepage'); window.location.href='index.html';
- }catch(e){
-  s.innerText='❌ Error: '+e.message; btn.innerText='POST FREE - Publish Now'; btn.disabled=false;
-  if(e.message.includes('Bucket not found')) alert('Go to Supabase > Storage > New Bucket > reality-media > Public ON > Create');
- }
+  alert('Posted! Go to '+feed_type+' feed'); window.location.href='index.html';
+ }catch(e){s.innerText='❌ '+e.message; btn.innerText='POST NOW'; btn.disabled=false;}
 }
+changeType();
 </script>
 </body>
 </html>
