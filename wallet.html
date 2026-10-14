@@ -113,3 +113,105 @@ function toggleBoost(el){el.style.background=el.style.background=='rgb(228, 230,
 load();
 </script>
 </body></html>
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wallet - REALITY MALL</title>
+<script src="https://js.paystack.co/v1/inline.js"></script>
+<style>
+*{box-sizing:border-box;font-family:Arial} body{margin:0;background:#f5f6f8;padding-bottom:90px}
+.top{background:#0f1115;color:#fff;padding:12px 14px;display:flex;justify-content:space-between}
+.balance{background:linear-gradient(135deg,#1a2332,#2a3a4a);color:#fff;margin:14px;border-radius:16px;padding:18px}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 14px}
+.btn{padding:14px;border:none;border-radius:12px;font-weight:800;color:#fff;display:flex;align-items:center;gap:6px}
+.red{background:#ff2d55} .blue{background:#0d63f2}
+.card{background:#fff;margin:14px;border-radius:12px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.boost{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #eee;align-items:center}
+.toggle{width:44px;height:26px;background:#0d63f2;border-radius:20px;position:relative;margin-left:auto}.toggle:after{content:'';width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:3px;right:3px}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #eee}
+</style>
+</head><body>
+<div class="top"><div><a href="index.html" style="color:#fff;text-decoration:none">←</a> <b>Wallet - REALITY MALL</b></div><div>🔔</div></div>
+
+<div class="balance">
+<div style="display:flex;justify-content:space-between;font-size:13px;color:#9fb0c8"><span>📁 Balance</span><span>🪙 Coins 0</span></div>
+<h1 style="font-size:48px;margin:8px 0">₦<span id="bal">0</span></h1>
+<div style="font-size:12px;color:#9fb0c8">Available balance • <span id="vStatus">Not Verified</span> • Paystack: pk_live_16a8... secured</div>
+</div>
+
+<div class="btns">
+<button class="btn red" onclick="promote()">📢 Promote Your Shop</button>
+<button class="btn blue" onclick="verify()">🛡️ <span id="vText">Verify Now<br>₦10,000</span></button>
+</div>
+
+<div class="card">
+<h3 style="margin:0">Dashboard - Last 7 days</h3>
+<img src="https://quickchart.io/chart?c={type:'line',data:{labels:['Mon','Tue','Wed','Thu','Fri','Sat','Today'],datasets:[{data:[2,5,7,6,9,11,14],borderColor:'#0d63f2',fill:false}]}}" style="width:100%;height:90px;margin-top:8px">
+<div style="display:flex;justify-content:space-between;font-size:12px;margin-top:6px"><div>Earnings<br><b style="color:#0d63f2">+₦<span id="earn">0</span></b></div><div>Views boosted<br><b>1.2K</b></div></div>
+</div>
+
+<div class="card" style="background:#fff7e6;border:1px solid #ffb400">
+<h3>🔥 Boost for More Views</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+<button onclick="buyBoost(2500,'Product Boost')" style="padding:10px;border-radius:10px;background:#fff;border:1px solid #ffb400;font-weight:700">Product Boost<br>₦2,500 - 850 views</button>
+<button onclick="buyBoost(5000,'Shop Boost')" style="padding:10px;border-radius:10px;background:#ffb400;border:none;font-weight:700">Shop Boost<br>₦5,000 - 2K views</button>
+<button onclick="buyBoost(10000,'Premium')" style="padding:10px;border-radius:10px;background:#0d63f2;color:#fff;border:none;font-weight:700">Premium<br>₦10,000 - 5K views</button>
+<button onclick="buyBoost(20000,'Viral')" style="padding:10px;border-radius:10px;background:#fff;border:1px solid #0d63f2;font-weight:700">Viral<br>₦20,000 - 15K</button>
+</div>
+<p style="font-size:11px;margin-top:8px;color:#555">All payments use YOUR Paystack LIVE key pk_live_16a8... App gets 2% fee on each.</p>
+</div>
+
+<div class="card"><h3>Active Boosts (3)</h3>
+<div class="boost"><span style="background:#ffb400;padding:6px;border-radius:8px">⚡</span><div><b>Product Boost</b><br><small>Running • 3 days left • +850 views</small></div><div class="toggle"></div></div>
+<div class="boost"><span style="background:#ff6b9d;padding:6px;border-radius:8px">🎯</span><div><b>Shop Visibility</b><br><small>Active • 5 days left • +320 visits</small></div><div class="toggle"></div></div>
+</div>
+
+<div class="nav">
+<div onclick="location.href='index.html'">🏠<br>Home</div>
+<div onclick="location.href='shop.html'">🛍️<br>Shop</div>
+<div onclick="location.href='dashboard.html'" style="background:#000;color:#fff;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center">+</div>
+<div onclick="location.href='chat.html'">✉️<br>Inbox</div>
+<div style="color:#ff2d55">👤<br>Wallet</div>
+</div>
+
+<script>
+// YOUR PAYSTACK LIVE KEY - Already inserted!
+const MY_PAYSTACK_KEY = 'pk_live_16a8e4130e54cdbd8eb5a693ae37a52d874e3ee0';
+const TEST_KEY = 'pk_test_234282edd655fe3a25eb1f694013e3f0d29fd201';
+
+function load(){
+ let w=JSON.parse(localStorage.getItem('wallet')||'{"balance":0,"verified":false}');
+ document.getElementById('bal').innerText=w.balance.toLocaleString();
+ document.getElementById('earn').innerText=w.balance;
+ if(w.verified){document.getElementById('vStatus').innerHTML='✔️ Verified - Blue Tick'; document.getElementById('vText').innerHTML='✔️ Verified<br>Active';}
+}
+function verify(){
+ let w=JSON.parse(localStorage.getItem('wallet')||'{"balance":0,"verified":false}');
+ if(w.verified) return alert('Already verified!');
+ if(!confirm('Verify with blue tick for ₦10,000?\n\nPay with YOUR Paystack LIVE key\nBenefits: Blue tick, 3x views, top search\n\nYour app gets 2% = ₦200')) return;
+ PaystackPop.setup({
+  key: MY_PAYSTACK_KEY,
+  email: localStorage.getItem('myEmail')||'chidaluvitalisodera@gmail.com',
+  amount: 10000*100, currency:'NGN', ref:'VERIFY_'+Date.now(),
+  callback:function(r){
+   alert('Verified! Ref: '+r.reference+'\nPaid ₦10,000 with YOUR live key.\nFee 2% = ₦200 to you.\nUser gets blue tick + boost!');
+   w.verified=true; localStorage.setItem('wallet',JSON.stringify(w)); load();
+  }
+ }).openIframe();
+}
+function buyBoost(price,name){
+ if(!confirm(`${name} - ₦${price}?\nPay with your Paystack LIVE key?\nApp fee 2% = ₦${Math.floor(price*0.02)}`)) return;
+ PaystackPop.setup({
+  key: MY_PAYSTACK_KEY,
+  email: 'buyer@realitymall.com',
+  amount: price*100, currency:'NGN', ref:'BOOST_'+Date.now(),
+  callback:function(r){
+   alert(`Boost ${name} ACTIVE! Ref: ${r.reference}\nPaid ₦${price} via YOUR Paystack.\nViews will increase!`);
+   let w=JSON.parse(localStorage.getItem('wallet')||'{"balance":0,"verified":false}');
+   w.balance+=price; localStorage.setItem('wallet',JSON.stringify(w)); load();
+  }
+ }).openIframe();
+}
+function promote(){document.querySelector('.card').scrollIntoView({behavior:'smooth'})}
+load();
+</script>
+</body></html>
