@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shop Profile - REALITY MALL</title>
+<script src="https://js.paystack.co/v1/inline.js"></script>
+<style>
+*{box-sizing:border-box;font-family:-apple-system,Arial} body{margin:0;background:#f5f6f8;display:flex;justify-content:center;padding-bottom:80px}
+.phone{width:100%;max-width:400px;background:#fff;min-height:100vh;position:relative;overflow:hidden}
+.header{padding:14px 16px;display:flex;justify-content:space-between;align-items:center;background:#fff;position:sticky;top:0;z-index:10}
+.header button{width:40px;height:40px;border-radius:50%;border:none;background:#f0f2f5;font-size:18px}
+.cover{width:100%;height:220px;object-fit:cover;background:#e8e0d8}
+.profileCard{background:#fff;border-radius:16px;padding:14px;display:flex;gap:12px;box-shadow:0 8px 24px rgba(0,0,0,.12);margin:-50px 16px 0 16px;position:relative;z-index:5}
+.avatar{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.tabs{display:flex;gap:20px;padding:16px 16px 0 16px;overflow-x:auto;border-bottom:1px solid #f0f0f0}
+.tab{padding:8px 4px 12px 4px;font-weight:600;color:#888;border-bottom:3px solid transparent;white-space:nowrap;cursor:pointer;background:none;border-top:none;border-left:none;border-right:none;font-size:15px}
+.tab.active{color:#000;border-bottom:3px solid #000}
+.productsHead{display:flex;justify-content:space-between;padding:16px}
+.products{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 12px 20px 12px}
+.card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.06);border:1px solid #f0f0f0}
+.card img{width:100%;height:150px;object-fit:cover;background:#f9f6f2}
+.cardInfo{padding:10px}
+.btn{width:100%;padding:10px;border:none;border-radius:10px;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer}
+.pink{background:#f8a0b0;color:#fff} .blue{background:#2b5af2;color:#fff}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #eee;max-width:400px;margin:0 auto;left:50%;transform:translateX(-50%)}
+</style>
+</head><body>
+<div class="phone">
+<div class="header">
+<button onclick="location.href='index.html'">←</button>
+<b>Shop Profile</b>
+<div style="display:flex;gap:8px"><button onclick="shareShop()">⤴️</button><button>•••</button></div>
+</div>
+
+<img id="cover" class="cover" src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=600">
+
+<div class="profileCard">
+<img id="avatar" class="avatar" src="https://i.pravatar.cc/100?img=32">
+<div style="flex:1">
+<div style="display:flex;gap:6px;align-items:center"><b id="shopName" style="font-size:16px">Odera Fashion & Beauty</b><span style="background:#2b5af2;color:#fff;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px">✔️</span></div>
+<div style="display:flex;gap:6px;align-items:center;margin-top:6px;font-size:14px"><span style="color:#ffb400">⭐</span><b>4.9</b><span style="color:#ffb400">⭐⭐⭐⭐⭐</span><span style="color:#888">• 2k reviews</span></div>
+<div style="display:flex;gap:6px;align-items:center;margin-top:6px;font-size:13px;color:#555"><span>🇳🇬</span><span id="loc">Warri, Nigeria</span><span>📍</span></div>
+</div>
+</div>
+
+<div class="tabs">
+<button class="tab active" onclick="switchTab('Products',this)">Products</button>
+<button class="tab" onclick="switchTab('Arts',this)">Arts</button>
+<button class="tab" onclick="switchTab('About',this)">About</button>
+<button class="tab" onclick="switchTab('Reviews',this)">Reviews</button>
+</div>
+
+<div class="productsHead">
+<b>Products</b>
+<span style="color:#e85d8a;font-size:14px;cursor:pointer" onclick="alert('24 products')">See all 24</span>
+</div>
+
+<div id="products" class="products"></div>
+
+<div id="aboutBox" style="display:none;padding:16px">
+<h3>About Odera Fashion</h3>
+<p style="font-size:14px;color:#555;line-height:1.5">
+📍 Location: Warri, Delta State<br>
+📞 Phone: +2349078617514 (WhatsApp available)<br>
+💳 Payment: Paystack secured - Money goes to seller's bank<br>
+✅ Verified: Blue tick shop<br>
+🚚 Delivery: Warri, Ughelli, Sapele, Asaba within 24hrs<br><br>
+We sell quality fashion, shoes, sweaters, bags. All products original. Chat 1-on-1 for negotiation. Send pictures/videos/voice notes in inbox.
+</p>
+</div>
+
+<div id="reviewsBox" style="display:none;padding:16px">
+<h3>Reviews (2k)</h3>
+<div style="background:#fff7f0;padding:12px;border-radius:12px;margin-bottom:8px">⭐⭐⭐⭐⭐ <b>Amaka</b> - "Lovely shoe, fast delivery in Warri!"</div>
+<div style="background:#fff7f0;padding:12px;border-radius:12px;margin-bottom:8px">⭐⭐⭐⭐⭐ <b>Tunde</b> - "OC Tech is legit, powerbank original"</div>
+<div style="background:#fff7f0;padding:12px;border-radius:12px">⭐⭐⭐⭐⭐ <b>Blessing</b> - "Verified seller, I trust Reality Mall"</div>
+</div>
+
+<div class="nav">
+<div onclick="location.href='index.html'" style="text-align:center;font-size:11px">🏠<br>Home</div>
+<div onclick="location.href='shop.html'" style="text-align:center;font-size:11px;color:#2b5af2">🛍️<br>Shop</div>
+<div onclick="location.href='post.html'" style="text-align:center;background:#000;color:#fff;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:-10px">+</div>
+<div onclick="location.href='chat.html'" style="text-align:center;font-size:11px">✉️<br>Inbox</div>
+<div onclick="location.href='wallet.html'" style="text-align:center;font-size:11px">👤<br>Wallet</div>
+</div>
+</div>
+
+<script>
+const MY_KEY='pk_live_16a8e4130e54cdbd8eb5a693ae37a52d874e3ee0';
+let params=new URLSearchParams(location.search);
+let shopName=params.get('name')||'Odera Fashion & Beauty';
+document.getElementById('shopName').innerText=shopName;
+document.getElementById('loc').innerText='Warri, Nigeria • +2349078617514';
+
+let products=[
+ {name:'Vintage Sweater',priceN:15000,priceG:'GH₵120 GHS',img:'https://images.unsplash.com/photo-1578768079052-aa76e52ff2f7?w=400',type:'sweater'},
+ {name:'Shoes',priceN:15000,priceG:'GH₵120 GHS',img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400',type:'shoes'},
+ {name:'Nike Air Red',priceN:15000,priceG:'GH₵120 GHS',img:'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400',type:'shoes'},
+ {name:'Oraimo Powerbank',priceN:12500,priceG:'GH₵98 GHS',img:'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=400',type:'tech'},
+];
+
+function renderProducts(filter=''){
+ let list=filter==''?products:products.filter(p=>p.type==filter||filter=='Products');
+ document.getElementById('products').innerHTML=list.map(p=>`
+ <div class="card">
+ <img src="${p.img}">
+ <div class="cardInfo">
+ <b style="font-size:14px">${p.name}</b><br>
+ <span style="color:#c94a6b;font-size:13px;font-weight:700">₦${p.priceN.toLocaleString()} NGN</span><br>
+ <small style="color:#555">${p.priceG}</small>
+ <div style="display:flex;gap:6px;margin-top:8px">
+ <button class="btn pink" onclick="addToCart('${p.name}',${p.priceN})">🛒 Add to Cart</button>
+ </div>
+ <div style="margin-top:6px">
+ <button class="btn blue" onclick="chatSeller('${p.name}')">💬 Chat with Seller</button>
+ </div>
+ </div>
+ </div>`).join('');
+}
+function switchTab(tab,el){
+ document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); el.classList.add('active');
+ document.getElementById('products').style.display=tab=='Products'?'grid':'none';
+ document.getElementById('aboutBox').style.display=tab=='About'?'block':'none';
+ document.getElementById('reviewsBox').style.display=tab=='Reviews'?'block':'none';
+ document.querySelector('.productsHead').style.display=tab=='Products'?'flex':'none';
+ if(tab=='Arts') { document.getElementById('products').style.display='grid'; renderProducts('tech'); }
+ else if(tab=='Products') renderProducts('');
+}
+function addToCart(name,price){
+ let cart=JSON.parse(localStorage.getItem('reality_cart')||'[]');
+ cart.push({name,price,qty:1}); localStorage.setItem('reality_cart',JSON.stringify(cart));
+ alert(name+' added to cart! Price: ₦'+price+'\n\nMoney will go to seller via your Paystack LIVE key pk_live_16a8e...\nYour 2% fee = ₦'+Math.floor(price*0.02));
+ location.href='cart.html';
+}
+function chatSeller(product){
+ localStorage.setItem('chat_product',product);
+ location.href='chat.html';
+}
+function shareShop(){
+ if(navigator.share){navigator.share({title:shopName,text:'Check my shop on Reality Mall - Warri',url:location.href});}
+ else {prompt('Copy shop link:',location.href);}
+}
+renderProducts();
+</script>
+</body></html>
