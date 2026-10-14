@@ -1,98 +1,55 @@
 <!DOCTYPE html><html><head><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4813832175831420"
-     crossorigin="anonymous"></script><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Chat - Reality Mall</title>
+     crossorigin="anonymous"></script><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Chats - Reality Mall</title>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4813832175831420" crossorigin="anonymous"></script>
 <style>
-*{box-sizing:border-box;font-family:Arial} body{margin:0;background:#e5ddd5}
-.top{background:#008069;color:#fff;padding:12px;font-weight:700;display:flex;justify-content:space-between}
-.chats{padding:10px;padding-bottom:80px}
-.msg{background:#fff;padding:8px 12px;border-radius:12px;margin:8px 0;max-width:80%;box-shadow:0 1px 2px rgba(0,0,0,.1)}
-.me{background:#d9fdd3;margin-left:auto}
-.audioWrap{width:240px}
-audio{width:100%;height:40px}
-.bottom{position:fixed;bottom:0;left:0;right:0;background:#f0f0f0;padding:8px;display:flex;gap:6px;align-items:center}
-.input{flex:1;padding:12px;border-radius:24px;border:none}
-.btn{width:44px;height:44px;border-radius:50%;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.rec{background:#008069;color:#fff}.send{background:#008069;color:#fff}
-.rec.recording{background:red;animation:pulse 1s infinite} @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.1)}}
+*{box-sizing:border-box;font-family:Arial} body{margin:0;background:#fff}
+.top{background:#fff;padding:14px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0}
+.tab{display:flex;gap:0;background:#f0f2f5;margin:10px;border-radius:12px;padding:4px}
+.tab div{flex:1;text-align:center;padding:10px;border-radius:8px;cursor:pointer;font-weight:700}
+.tab.active{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.1);color:#0d63f2}
+.chatList{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid #f5f5f5;cursor:pointer}
+.chatList:hover{background:#f8f9fa}
+.av{width:48px;height:48px;border-radius:50%;background:#0d63f2;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:8px 0;border-top:1px solid #eee}
 </style></head><body>
-<div class="top"><span id="chatName">Warri Sellers Group (12 members)</span><span onclick="location.href='index.html'">✕</span></div>
-<div id="chats" class="chats"></div>
-<div class="bottom">
-<label style="width:36px;text-align:center">📷<input type="file" accept="image/*" hidden onchange="sendImage(this)"></label>
-<input id="txt" class="input" placeholder="Type a message...">
-<button id="recBtn" class="btn rec" onclick="toggleRec()">🎤</button>
-<button class="btn send" onclick="sendText()">➤</button>
-</div>
-<script>
-let messages=JSON.parse(localStorage.getItem('warri_chats')||'[]');
-if(messages.length==0){messages=[
-{type:'text',text:'Hi',me:false,time:'9:11 PM'},
-{type:'text',text:'Thanks! Seller will reply soon. For faster response call group',me:false,time:'9:11 PM'},
-];}
-let mediaRec=null, chunks=[], isRec=false, recStart=0;
+<div class="top"><h3 style="margin:0">Chats</h3><span onclick="location.href='index.html'">✕</span></div>
+<div class="tab"><div id="tAll" class="active" onclick="showTab('all')">All Chats</div><div id="tGroup" onclick="showTab('group')">Group</div><div id="tSell" onclick="showTab('sellers')">Sellers</div></div>
+<div id="list"></div>
 
-function render(){
- document.getElementById('chats').innerHTML=messages.map(m=>{
-  if(m.type=='voice'){
-   return `<div class="msg ${m.me?'me':''}"><div class="audioWrap"><audio controls src="${m.src}"></audio><small>Voice note • ${m.time}</small></div></div>`;
-  }else if(m.type=='image'){
-   return `<div class="msg ${m.me?'me':''}"><img src="${m.src}" style="width:200px;border-radius:8px"><br><small>${m.time}</small></div>`;
-  }else{
-   return `<div class="msg ${m.me?'me':''}">${m.text}<br><small>${m.time}</small></div>`;
-  }
- }).join('');
- window.scrollTo(0,document.body.scrollHeight);
+<div class="nav">
+<div onclick="location.href='index.html'">🏠<br>Home</div>
+<div onclick="location.href='shop.html'">🛍️<br>Shop</div>
+<div style="width:52px;height:52px;background:#000;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin-top:-20px;border:3px solid #fff" onclick="location.href='post.html'">+</div>
+<div style="color:#0d63f2;font-weight:800">✉️<br>Inbox</div>
+<div onclick="location.href='wallet.html'">💰<br>Wallet</div>
+<div onclick="location.href='profile.html'">👤<br>You</div>
+</div>
+
+<script>
+let chats=[
+{name:'Warri Sellers Group', last:'Thanks! Seller will reply soon...', time:'9:11 PM', count:12, type:'group', letter:'W'},
+{name:'Odera - CEO', last:'I built this for Warri sellers! You verified?', time:'9:10 PM', count:1, type:'seller', letter:'O'},
+{name:'Fashion Hub Warri', last:'New shoes available! Check my shop', time:'8:45 PM', count:2, type:'seller', letter:'F'},
+{name:'Phone Dealer Effurun', last:'Voice note', time:'Yesterday', count:0, type:'seller', letter:'P'},
+{name:'Buyer - Warri Customer', last:'How much for this bag?', time:'Yesterday', count:0, type:'buyer', letter:'B'}
+];
+function render(filter='all'){
+ let f=filter=='all'?chats:chats.filter(c=>c.type==filter || (filter=='group' && c.type=='group'));
+ document.getElementById('list').innerHTML=f.map(c=>`
+  <div class="chatList" onclick="openChat('${c.name}')">
+    <div class="av">${c.letter}</div>
+    <div style="flex:1"><div style="display:flex;justify-content:space-between"><b>${c.name}</b><small style="color:#888">${c.time}</small></div><div style="font-size:13px;color:#666;display:flex;justify-content:space-between"><span>${c.last}</span>${c.count>0?'<span style="background:#0d63f2;color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px">'+c.count+'</span>':''}</div></div>
+  </div>
+ `).join('') + `<div style="padding:20px;text-align:center;color:#888;font-size:13px;margin-bottom:80px"><div style="margin:10px"><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-4813832175831420" data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({});</script></div>Tap a chat to open private chat with voice, picture, video</div>`;
 }
-function getTime(){return new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});}
-function sendText(){
- let t=document.getElementById('txt').value.trim(); if(!t) return;
- messages.push({type:'text',text:t,me:true,time:getTime()}); save(); document.getElementById('txt').value='';
+function showTab(t){
+ document.querySelectorAll('.tab div').forEach(d=>d.classList.remove('active'));
+ document.getElementById('t'+t.charAt(0).toUpperCase()+t.slice(1)).classList.add('active');
+ if(t=='all') render('all'); else if(t=='group') render('group'); else render('seller');
 }
-function sendImage(inp){
- let r=new FileReader(); r.onload=e=>{
-  messages.push({type:'image',src:e.target.result,me:true,time:getTime()}); save();
- }; r.readAsDataURL(inp.files[0]);
+function openChat(name){
+ localStorage.setItem('currentChat',name);
+ location.href='chat_room.html?name='+encodeURIComponent(name);
 }
-async function toggleRec(){
- if(!isRec){ startRec(); } else { stopRec(); }
-}
-async function startRec(){
- try{
-  let stream=await navigator.mediaDevices.getUserMedia({audio:true});
-  mediaRec=new MediaRecorder(stream); chunks=[];
-  mediaRec.ondataavailable=e=>{if(e.data.size>0) chunks.push(e.data);};
-  mediaRec.onstop=async()=>{
-   let blob=new Blob(chunks,{type:'audio/webm'});
-   if(blob.size<1000){ alert('Hold mic for at least 1 sec!'); return; }
-   let reader=new FileReader();
-   reader.onloadend=()=>{
-    messages.push({type:'voice',src:reader.result,me:true,time:getTime()});
-    save();
-    // Clear old 0:00 notes
-    messages=messages.filter(m=>!(m.type=='voice' && (!m.src || m.src.length<100)));
-    localStorage.setItem('warri_chats',JSON.stringify(messages));
-   };
-   reader.readAsDataURL(blob);
-   stream.getTracks().forEach(t=>t.stop());
-  };
-  mediaRec.start(); isRec=true; recStart=Date.now();
-  document.getElementById('recBtn').classList.add('recording');
-  document.getElementById('recBtn').innerText='⬛';
- }catch(e){alert('Mic permission needed! Allow microphone in browser settings. '+e.message);}
-}
-function stopRec(){
- if(mediaRec && isRec){
-  mediaRec.stop(); isRec=false;
-  document.getElementById('recBtn').classList.remove('recording');
-  document.getElementById('recBtn').innerText='🎤';
- }
-}
-function save(){localStorage.setItem('warri_chats',JSON.stringify(messages)); render();}
-function clearBadVoices(){ // Run once to delete your 0:00 notes
- messages=messages.filter(m=>!(m.type=='voice' && (!m.src || m.src.includes('0:00') || m.src.length<200)));
- localStorage.setItem('warri_chats',JSON.stringify(messages)); render(); alert('Deleted bad 0:00 voice notes! Now record new one.');
-}
-render();
-// Auto clean bad notes on load
-setTimeout(clearBadVoices,1000);
+render('all');
 </script></body></html>
