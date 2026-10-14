@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Login - REALITY MALL</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>body{margin:0;background:#f5f6fa;display:flex;justify-content:center;padding:20px}.card{background:#fff;width:100%;max-width:400px;padding:24px;border-radius:16px} input{width:100%;padding:14px;margin:8px 0;border-radius:10px;border:2px solid #eef3ff;background:#eef3ff} button{width:100%;padding:14px;background:#000;color:#fff;border:none;border-radius:10px;font-weight:800;margin-top:10px}</style>
+</head><body>
+<div class="card">
+<h1>Login to REALITY MALL</h1>
+<input id="email" placeholder="Email e.g. chidaluvitalisodera@gmail.com">
+<input id="phone" placeholder="Phone +2349078617514">
+<input id="pass" type="password" placeholder="Password">
+<button onclick="login()">Log In</button>
+<button onclick="signup()" style="background:#fff;color:#000;border:2px solid #000">Create Account - Post with your number</button>
+<p><a href="index.html">← Back to Mall</a></p>
+<div id="msg"></div>
+</div>
+<script>
+const client=supabase.createClient('https://trawtkndvzsplcmmtjox.supabase.co','sb_publishable_ACkUQyZDMHThA7SYE1ME2w_HMNjyIXg');
+async function signup(){
+ let e=email.value,p=pass.value,ph=phone.value; if(!e||!p) return alert('Fill email/pass');
+ let {data,error}=await client.auth.signUp({email:e,password:p,options:{data:{phone:ph}}});
+ if(error) return msg.innerText=error.message;
+ await client.from('profiles').insert([{id:data.user.id,full_name:e.split('@')[0],phone:ph}]);
+ alert('Account created! Now login');
+}
+async function login(){
+ let e=email.value,p=pass.value; let {data,error}=await client.auth.signInWithPassword({email:e,password:p});
+ if(error) return msg.innerText=error.message;
+ localStorage.setItem('user_id',data.user.id); location.href='dashboard.html';
+}
+</script>
+</body></html>
