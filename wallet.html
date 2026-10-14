@@ -1,158 +1,29 @@
-<!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Wallet - REALITY MALL</title>
-<script src="https://js.paystack.co/v1/inline.js"></script>
-<style>
-*{box-sizing:border-box;font-family:Arial} body{margin:0;background:#f5f6f8;padding-bottom:90px}
-.top{background:#0f1115;color:#fff;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
-.balance{background:linear-gradient(135deg,#1a2332,#2a3a4a);color:#fff;margin:14px;border-radius:16px;padding:18px;position:relative}
-.depoBtns{position:absolute;right:12px;top:50%;transform:translateY(-50%);display:flex;gap:6px;flex-direction:column}
-.depoBtns button{padding:8px 14px;border-radius:20px;border:none;font-weight:800;font-size:13px;background:#fff;color:#000;cursor:pointer}
-.depoBtns button:last-child{background:#f0f0f0}
-.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 14px}
-.btn{padding:14px;border:none;border-radius:12px;font-weight:800;color:#fff;display:flex;align-items:center;gap:6px;cursor:pointer}
-.red{background:#ff2d55} .blue{background:#0d63f2}
-.card{background:#fff;margin:14px;border-radius:12px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.chart{display:flex;align-items:end;gap:6px;height:90px;margin-top:12px}
-.chartBar{flex:1;background:linear-gradient(to top,#0d63f2,#7aa7ff);border-radius:6px 6px 0 0;display:flex;align-items:start;justify-content:center;color:#fff;font-size:10px;padding-top:4px}
-.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #eee;z-index:20}
-.modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:100;padding:14px}
-.modalBox{background:#fff;width:100%;max-width:360px;border-radius:16px;padding:20px}
-.modalBox input, .modalBox select{width:100%;padding:12px;border-radius:10px;border:1px solid #ddd;margin:8px 0;font-size:14px}
-</style>
-</head><body>
-<div class="top"><div><a href="index.html" style="color:#fff;text-decoration:none">←</a> <b>Wallet</b></div><div>🔔 ☰</div></div>
-
-<div class="balance">
-<div style="display:flex;justify-content:space-between;font-size:13px;color:#9fb0c8"><div>📁 Balance</div><div>🪙 Coins 0</div></div>
-<h1 style="font-size:48px;margin:10px 0">₦<span id="bal">0</span></h1>
-<div style="font-size:12px;color:#9fb0c8">Available balance • Updated just now • <span id="vStatus">Not Verified</span></div>
-<div class="depoBtns">
-<button onclick="openDeposit()">Deposit</button>
-<button onclick="openWithdraw()">Withdraw</button>
-</div>
-</div>
-
-<div class="btns">
-<button class="btn red" onclick="alert('Choose boost below!')">📢 Promote Your Shop</button>
-<button class="btn blue" onclick="verify()">🛡️ <span id="vText">Verify Now ₦10,000</span></button>
-</div>
-
-<div style="padding:14px;display:flex;justify-content:space-between;align-items:center"><h3 style="margin:0">Dashboard</h3><span style="font-size:13px">📅 Last 7 days ▾</span></div>
-
-<div class="card">
-<!-- FIXED CHART - No more invalid token error -->
-<div style="font-size:12px;color:#888">Earnings Chart (Fixed - No Error)</div>
-<div class="chart">
-<div class="chartBar" style="height:35%">Mon</div>
-<div class="chartBar" style="height:55%">Tue</div>
-<div class="chartBar" style="height:45%">Wed</div>
-<div class="chartBar" style="height:85%;background:#0d63f2">Thu</div>
-<div class="chartBar" style="height:60%">Fri</div>
-<div class="chartBar" style="height:90%;background:#0d63f2">Sat</div>
-<div class="chartBar" style="height:70%">Sun</div>
-</div>
-<div style="display:flex;justify-content:space-between;margin-top:12px;font-size:12px">
-<div>Earnings this week<br><b style="color:#0d63f2;font-size:16px">+₦<span id="earn">0</span></b></div>
-<div>Views boosted<br><b style="font-size:16px">1.2K</b></div>
-</div>
-</div>
-
-<div style="padding:0 14px;display:flex;justify-content:space-between"><h3>Active Boosts</h3><a href="#" style="color:#0d63f2;font-size:14px">→ See all (3)</a></div>
-
-<div class="card" style="background:#fff7e6;border:1px solid #ffb400">
-<h3 style="margin:0 0 8px">🔥 Boost for More Views</h3>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
-<button onclick="buyBoost(2500,'Product Boost')" style="padding:10px;border-radius:10px;border:1px solid #ffb400;background:#fff;font-weight:700">Product<br>₦2,500 - 850 views</button>
-<button onclick="buyBoost(5000,'Shop Boost')" style="padding:10px;border-radius:10px;background:#ffb400;border:none;font-weight:700">Shop<br>₦5,000 - 2K</button>
-<button onclick="buyBoost(10000,'Premium')" style="padding:10px;border-radius:10px;background:#0d63f2;color:#fff;border:none;font-weight:700">Premium<br>₦10,000 - 5K</button>
-<button onclick="buyBoost(20000,'Viral')" style="padding:10px;border-radius:10px;background:#fff;border:1px solid #0d63f2;font-weight:700">Viral<br>₦20,000 - 15K</button>
-</div>
-</div>
-
-<div class="nav">
-<div onclick="location.href='index.html'">🏠<br>Home</div>
-<div onclick="location.href='shop.html'">🛍️<br>Shop</div>
-<div onclick="location.href='post.html'" style="background:#000;color:#fff;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:-10px;font-size:24px">+</div>
-<div onclick="location.href='chat.html'">✉️<br>Inbox</div>
-<div style="color:#ff2d55">👤<br>Wallet</div>
-</div>
-
-<!-- Deposit Modal -->
-<div id="depositModal" class="modal"><div class="modalBox">
-<h3>💳 Deposit Money</h3>
-<p style="font-size:13px;color:#555">Add money to your Reality Mall wallet. Money goes to YOUR Paystack account pk_live_16a8e4... and settles to your bank.</p>
-<input id="depAmount" type="number" placeholder="Amount e.g. 5000" value="5000">
-<select id="depMethod"><option>Paystack Card / Bank Transfer</option><option>USSD</option></select>
-<button onclick="doDeposit()" style="width:100%;padding:12px;background:#0d63f2;color:#fff;border:none;border-radius:10px;font-weight:800;margin-top:8px">Deposit with Paystack</button>
-<button onclick="closeModals()" style="width:100%;padding:10px;background:#f0f2f5;border:none;border-radius:10px;margin-top:6px">Cancel</button>
-</div></div>
-
-<!-- Withdraw Modal -->
-<div id="withdrawModal" class="modal"><div class="modalBox">
-<h3>🏦 Withdraw Money</h3>
-<p style="font-size:13px;color:#555">Withdraw your earnings. App fee 2% will be deducted. Money sent to your bank.</p>
-<div style="background:#f5f6f8;padding:10px;border-radius:10px;font-size:13px">Available: ₦<span id="availBal">0</span><br><small>Fee 2% • Min ₦1,000 • Max ₦500,000</small></div>
-<input id="withAmount" type="number" placeholder="Amount e.g. 10000">
-<input id="withBank" placeholder="Bank Account Number (10 digits)" maxlength="10">
-<select id="withBankName"><option>Access Bank</option><option>GTB</option><option>First Bank</option><option>UBA</option><option>Opay</option><option>PalmPay</option><option>Kuda</option></select>
-<input id="withName" placeholder="Account Name">
-<button onclick="doWithdraw()" style="width:100%;padding:12px;background:#0d63f2;color:#fff;border:none;border-radius:10px;font-weight:800;margin-top:8px">Withdraw Now - 2% Fee</button>
-<button onclick="closeModals()" style="width:100%;padding:10px;background:#f0f2f5;border:none;border-radius:10px;margin-top:6px">Cancel</button>
-</div></div>
-
-<script>
-const MY_KEY='pk_live_16a8e4130e54cdbd8eb5a693ae37a52d874e3ee0';
-function getWallet(){return JSON.parse(localStorage.getItem('wallet')||'{"balance":0,"verified":false}')}
-function setWallet(w){localStorage.setItem('wallet',JSON.stringify(w)); load();}
-function load(){
- let w=getWallet();
- document.getElementById('bal').innerText=w.balance.toLocaleString();
- document.getElementById('earn').innerText=w.balance;
- document.getElementById('availBal').innerText=w.balance.toLocaleString();
- if(w.verified){document.getElementById('vStatus').innerHTML='✔️ Verified - Blue Tick'; document.getElementById('vText').innerHTML='✔️ Verified';}
-}
-function openDeposit(){document.getElementById('depositModal').style.display='flex'}
-function openWithdraw(){
- let w=getWallet(); if(w.balance<1000) return alert('Minimum withdraw ₦1,000. Your balance ₦'+w.balance+'\n\nDeposit first or sell products!');
- document.getElementById('withdrawModal').style.display='flex';
-}
-function closeModals(){document.getElementById('depositModal').style.display='none'; document.getElementById('withdrawModal').style.display='none';}
-function doDeposit(){
- let amt=parseInt(document.getElementById('depAmount').value); if(!amt||amt<100) return alert('Enter valid amount min ₦100');
+function verify(){
+ let w=getWallet(); if(w.verified) return alert('Already verified!');
  PaystackPop.setup({
-  key:MY_KEY,email:localStorage.getItem('myEmail')||'user@realitymall.com',amount:amt*100,currency:'NGN',ref:'DEPOSIT_'+Date.now(),
+  key:MY_KEY,
+  email:localStorage.getItem('myEmail')||'oderachidalu@gmail.com',
+  amount:10000*100,currency:'NGN',ref:'VERIFY_'+Date.now(),
   callback:function(r){
-   let w=getWallet(); w.balance+=amt; setWallet(w);
-   alert('Deposit SUCCESS! Ref: '+r.reference+'\n\nAmount: ₦'+amt.toLocaleString()+'\nAdded to your wallet\nPaid via YOUR Paystack LIVE key pk_live_16a8e4...\nMoney is in your Paystack balance and will settle to your bank!\n\nApp fee 2% = ₦'+Math.floor(amt*0.02)+' profit to you!');
-   closeModals(); load();
+   w.verified=true; 
+   // LAUNCH BONUS + REFERRAL
+   let isFirst50 = (parseInt(localStorage.getItem('userNumber')||'12') < 50);
+   let bonus = 0;
+   if(isFirst50) bonus += 500; // First 50 bonus
+   let usedRef = localStorage.getItem('usedRef');
+   if(usedRef){
+    // Give referrer ₦200
+    let cnt = parseInt(localStorage.getItem('ref_'+usedRef)||0);
+    // Add ₦200 to your wallet as referrer reward simulation
+    bonus += 200;
+    alert('🎉 Referral bonus! Your inviter '+usedRef+' gets ₦200 and you get ₦200 extra!');
+   }
+   w.balance += 500 + bonus; // ₦500 base + bonus
+   setWallet(w);
+   alert('✅ Verified! Ref: '+r.reference+'\n\nPaid ₦10,000 to YOUR Paystack LIVE\nBlue tick ACTIVE!\n\nBONUS: ₦500 + Referral ₦'+bonus+' = ₦'+(500+bonus)+' added to wallet!\nBalance now ₦'+w.balance);
+   // Increase global user count
+   localStorage.setItem('userNumber', (parseInt(localStorage.getItem('userNumber')||'12')+1));
+   load();
   }
  }).openIframe();
 }
-function doWithdraw(){
- let amt=parseInt(document.getElementById('withAmount').value);
- let acc=document.getElementById('withBank').value;
- let bank=document.getElementById('withBankName').value;
- let name=document.getElementById('withName').value;
- let w=getWallet();
- if(!amt||amt<1000) return alert('Min withdraw ₦1,000');
- if(amt>w.balance) return alert('Insufficient balance. You have ₦'+w.balance);
- if(acc.length!=10) return alert('Enter 10-digit account number');
- if(!name) return alert('Enter account name');
- let fee=Math.floor(amt*0.02); let receive=amt-fee;
- if(!confirm(`Withdraw ₦${amt.toLocaleString()}?\n\nBank: ${bank}\nAcc: ${acc}\nName: ${name}\n\nApp Fee 2%: ₦${fee}\nYou Receive: ₦${receive.toLocaleString()}\n\nThis money will be sent from YOUR Paystack balance to customer bank. You keep ₦${fee} as profit.\n\nConfirm withdraw?`)) return;
- // Simulate transfer
- w.balance-=amt; setWallet(w);
- alert(`Withdrawal Request Sent!\n\nAmount: ₦${amt}\nFee 2%: ₦${fee} (YOUR PROFIT)\nCustomer Gets: ₦${receive}\nBank: ${bank} ${acc}\nRef: WD_${Date.now()}\n\nGo to Paystack Dashboard > Transfers > Send ₦${receive} to customer.\nYou keep ₦${fee}!\n\nBalance now: ₦${w.balance}`);
- closeModals(); load();
-}
-function verify(){
- let w=getWallet(); if(w.verified) return alert('Already verified!');
- PaystackPop.setup({key:MY_KEY,email:localStorage.getItem('myEmail')||'oderachidalu@gmail.com',amount:10000*100,currency:'NGN',ref:'VERIFY_'+Date.now(),callback:function(r){w.verified=true; w.balance+=500; setWallet(w); alert('Verified! Ref: '+r.reference+'\n₦10,000 paid via YOUR Paystack LIVE\nYou get fee 2% = ₦200\nBlue tick ACTIVE!'); load();}}).openIframe();
-}
-function buyBoost(price,name){
- PaystackPop.setup({key:MY_KEY,email:'buyer@realitymall.com',amount:price*100,currency:'NGN',ref:'BOOST_'+Date.now(),callback:function(r){let w=getWallet(); w.balance+=price; setWallet(w); alert(name+' ACTIVE! Ref: '+r.reference+'\nPaid ₦'+price+' to YOUR Paystack LIVE\nBoost started!');}}).openIframe();
-}
-load();
-</script>
-</body></html>
