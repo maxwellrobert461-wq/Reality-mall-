@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sign Up - REALITY MALL</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;font-family:Arial} body{margin:0;background:#f8f9fa;display:flex;justify-content:center;padding:15px}
+.card{background:#fff;width:100%;max-width:420px;border-radius:16px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,.08);margin-top:30px}
+input{width:100%;padding:14px;border-radius:10px;border:2px solid #e0e7ff;background:#eef3ff;margin:8px 0;font-size:16px}
+button{width:100%;padding:14px;border-radius:10px;border:none;background:#6c757d;color:#fff;font-weight:bold;margin-top:12px;font-size:16px}
+.lang{position:fixed;top:10px;right:10px;background:#000;color:#fff;border-radius:20px;padding:6px 12px}
+.security{height:8px;background:#ddd;border-radius:20px;margin:6px 0;overflow:hidden}.security div{height:100%;width:0%;transition:.3s}
+</style>
+</head>
+<body>
+<div class="lang">
+<select onchange="changeLang(this.value)" id="ls">
+<option value="en">🇬🇧 English</option>
+<option value="pid">🇳🇬 Pidgin</option>
+<option value="ig">Igbo</option>
+<option value="yo">Yoruba</option>
+<option value="ha">Hausa</option>
+<option value="fr">French</option>
+</select>
+</div>
+
+<div class="card">
+<h1 id="t1" style="font-size:32px;margin:0">Sign Up</h1>
+<p id="t2">Already a user? <a href="login.html" style="color:#0066ff;font-weight:bold">Log In</a></p>
+<p id="t3" style="text-align:center;color:#888">—— continue with ——</p>
+
+<label id="l1">Name</label>
+<input id="name" value="Odera chidalu vitalis">
+
+<label id="l2">Email</label>
+<input id="email" type="email" value="chidaluvitalisodera@gmail.com">
+
+<label id="l3">Password</label>
+<div style="position:relative"><input id="pass" type="password" placeholder="••••••••" oninput="check(this.value)"><span onclick="let i=document.getElementById('pass'); i.type=i.type=='password'?'text':'password'" style="position:absolute;right:12px;top:18px">👁️</span></div>
+<div class="security"><div id="bar"></div></div>
+<small id="sec">Security: Strong</small>
+
+<p style="font-size:13px;margin-top:15px">By Signing Up, you agree to our <a href="#">Terms of Service</a>, <a href="#">Privacy Policy</a>, and <a href="#">Use of Cookies</a>.</p>
+<button id="btn" onclick="signup()">Sign Up</button>
+<p style="text-align:center;margin:15px 0">or</p>
+<button style="background:#fff;color:#000;border:2px solid #ddd" onclick="google()">🔵 Continue with Google</button>
+</div>
+
+<script>
+const SURL='https://trawtkndvzsplcmmtjox.supabase.co'; const SKEY='sb_publishable_ACkUQyZDMHThA7SYE1ME2w_HMNjyIXg'; const client=supabase.createClient(SURL,SKEY);
+const D={en:{t1:'Sign Up',t2:'Already a user? Log In',t3:'—— continue with ——',l1:'Name',l2:'Email',l3:'Password',btn:'Sign Up'},pid:{t1:'Create Account',t2:'You don get account before? Log In',t3:'—— or use ——',l1:'Your Name',l2:'Email',l3:'Password',btn:'Create Account'},ig:{t1:'Debanye aha',l1:'Aha',l2:'Email',l3:'Paswọọdụ',btn:'Debanye aha'},yo:{t1:'Forukọsilẹ',l1:'Orukọ',l2:'Imeeli',l3:'Ọrọ igbaniwọle',btn:'Forukọsilẹ'},ha:{t1:'Yi Rajista',l1:'Suna',l2:'Imel',l3:'Kalmar sirri',btn:'Yi Rajista'}};
+function changeLang(c){let d=D[c]||D.en; document.getElementById('t1').innerText=d.t1; document.getElementById('l1').innerText=d.l1; document.getElementById('l2').innerText=d.l2; document.getElementById('l3').innerText=d.l3; document.getElementById('btn').innerText=d.btn; localStorage.setItem('lang',c)}
+function check(v){let s=0; if(v.length>5)s+=30; if(/[A-Z]/.test(v))s+=20; if(/[0-9]/.test(v))s+=20; if(/[^A-Za-z0-9]/.test(v))s+=30; document.getElementById('bar').style.width=s+'%'; document.getElementById('bar').style.background=s<50?'red':s<80?'orange':'green'; document.getElementById('sec').innerText='Security: '+(s<50?'Weak':s<80?'Medium':'Strong')}
+async function signup(){let n=document.getElementById('name').value,e=document.getElementById('email').value,p=document.getElementById('pass').value; if(!e||!p)return alert('Fill all'); document.getElementById('btn').innerText='Loading...'; let {error}=await client.auth.signUp({email:e,password:p,options:{data:{full_name:n}}}); if(error){alert(error.message); document.getElementById('btn').innerText='Sign Up'; return} localStorage.setItem('myShop',n); alert('Welcome '+n); location.href='dashboard.html';}
+async function google(){await client.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+'/dashboard.html'}})}
+if(localStorage.getItem('lang')){document.getElementById('ls').value=localStorage.getItem('lang'); changeLang(localStorage.getItem('lang'))}
+check('Strong123!');
+</script>
+</body>
+</html>
