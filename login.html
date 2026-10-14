@@ -1,69 +1,38 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Login - REALITY MALL</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>body{margin:0;background:#f5f6fa;display:flex;justify-content:center;padding:20px}.card{background:#fff;width:100%;max-width:400px;padding:24px;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.06)} input{width:100%;padding:14px;margin:8px 0;border-radius:10px;border:2px solid #eef3ff;background:#eef3ff;font-size:16px} button{width:100%;padding:14px;background:#000;color:#fff;border:none;border-radius:10px;font-weight:800;margin-top:10px;cursor:pointer} button.white{background:#fff;color:#000;border:2px solid #000}</style>
+<title>REALITY MALL</title>
+<style>
+*{box-sizing:border-box;font-family:-apple-system,Arial} body{margin:0;background:#fff;display:flex;justify-content:center;min-height:100vh}
+.wrap{width:100%;max-width:380px;padding:20px 20px 10px}
+.logo{width:90px;height:90px;background:#0d63f2;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:48px;font-weight:900;margin:40px auto 16px}
+h1{font-size:28px;text-align:center;margin:0;font-weight:800} p.sub{text-align:center;color:#333;font-size:20px;margin:12px 0 24px}
+input{width:100%;padding:16px 14px;border:2px solid #dddfe2;border-radius:12px;margin:10px 0;font-size:16px;background:#f5f6f7}
+.btn{width:100%;padding:14px;background:#0d63f2;color:#fff;border:none;border-radius:30px;font-size:18px;font-weight:700;margin:14px 0}
+.btn-outline{width:100%;padding:14px;background:#fff;color:#0d63f2;border:2px solid #0d63f2;border-radius:30px;font-size:16px;font-weight:700}
+.divider{display:flex;align-items:center;gap:12px;margin:18px 0;color:#777}.divider:before,.divider:after{content:'';flex:1;height:1px;background:#ddd}
+a.blue{color:#0d63f2;text-decoration:none;font-weight:600;display:block;text-align:center;margin:10px 0}
+.footer{text-align:center;color:#777;font-size:12px;margin-top:40px}
+</style>
 </head><body>
-<div class="card">
-<h1>Login to<br>REALITY MALL</h1>
-<input id="email" placeholder="Email" value="chidaluvitalisodera@gmail.com">
-<input id="phone" placeholder="Phone +234..." value="+2349078617514">
-<input id="pass" type="password" placeholder="Password" value="12345678">
-<button onclick="login()">Log In</button>
-<button class="white" onclick="signup()">Create Account - Post with your number</button>
-<p><a href="index.html">← Back to Mall</a></p>
-<div id="msg" style="margin-top:12px;font-weight:bold"></div>
+<div class="wrap">
+<div style="display:flex;justify-content:flex-end;font-size:13px"><span style="background:#f0f0f0;padding:6px 12px;border-radius:16px">English (US) ▾</span></div>
+<div class="logo">R</div>
+<h1>REALITY MALL</h1>
+<p class="sub">Log in to REALITY MALL</p>
+<input id="email" placeholder="Mobile number or email" value="+2349078617514">
+<input id="pass" type="password" placeholder="Password">
+<button class="btn" onclick="login()">Log in</button>
+<a class="blue" href="#">Forgotten password?</a>
+<div class="divider">or</div>
+<button class="btn-outline" onclick="signup()">Create new account</button>
+<div class="footer">Meta · About · Help · Privacy · Terms · Cookies</div>
 </div>
 <script>
-const client=supabase.createClient('https://trawtkndvzsplcmmtjox.supabase.co','sb_publishable_ACkUQyZDMHThA7SYE1ME2w_HMNjyIXg');
-function saveOffline(e,p,ph){
- localStorage.setItem('myEmail',e);
- localStorage.setItem('userPhone',ph);
+function login(){
+ localStorage.setItem('userPhone',document.getElementById('email').value);
  localStorage.setItem('myShop','Odera chidalu Vitalis');
- localStorage.setItem('user_id', 'user_'+Date.now());
+ location.href='index.html';
 }
-async function signup(){
- let e=document.getElementById('email').value, ph=document.getElementById('phone').value, p=document.getElementById('pass').value;
- let m=document.getElementById('msg');
- if(!e||!p){m.innerText='Fill email and password'; return}
- m.innerText='Creating...';
- try{
-  let {data,error}=await client.auth.signUp({email:e,password:p,options:{data:{phone:ph,full_name:'Odera chidalu Vitalis'}}});
-  if(error) throw error;
-  saveOffline(e,p,ph);
-  m.style.color='green'; m.innerText='✅ Account created! Redirecting to mall...';
-  setTimeout(()=>location.href='index.html',1000);
- }catch(err){
-  // If rate limit, login offline anyway!
-  if(err.message.includes('rate limit') || err.message.includes('Email rate')){
-   saveOffline(e,p,ph);
-   m.style.color='orange'; 
-   m.innerHTML='⚠️ Supabase rate limit, but you are logged in OFFLINE!<br>Your phone '+ph+' is saved. You can post products now.<br><br><button onclick="location.href=\'index.html\'" style=background:#ffc300;color:#000;padding:8px 12px;border:none;border-radius:8px>Go to Mall →</button>';
-  } else {
-   m.style.color='red'; m.innerText='Error: '+err.message;
-  }
- }
-}
-async function login(){
- let e=document.getElementById('email').value, ph=document.getElementById('phone').value, p=document.getElementById('pass').value;
- let m=document.getElementById('msg');
- m.innerText='Logging in...';
- try{
-  let {data,error}=await client.auth.signInWithPassword({email:e,password:p});
-  if(error) throw error;
-  saveOffline(e,p,ph);
-  m.style.color='green'; m.innerText='✅ Login success!'; location.href='index.html';
- }catch(err){
-  if(err.message.includes('rate limit')){
-   saveOffline(e,p,ph);
-   m.style.color='orange'; m.innerHTML='⚠️ Rate limit but logged in OFFLINE as '+ph+'<br><a href=index.html>Go to Mall</a>';
-  } else if(err.message.includes('Invalid')){
-   // Try signup if login fails
-   signup();
-  } else {
-   m.style.color='red'; m.innerText=err.message;
-  }
- }
-}
+function signup(){login()}
 </script>
 </body></html>
