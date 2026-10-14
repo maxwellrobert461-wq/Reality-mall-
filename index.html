@@ -1,62 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>REALITY MALL - Warri No.1 Marketplace</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>REALITY MALL - Warri No.1</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 <style>
-*{box-sizing:border-box;font-family:Arial, sans-serif}
-body{margin:0;background:#f5f6fa}
-.header{background:#000;color:#fff;padding:12px 15px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.logo{font-weight:900;font-size:20px;color:#ffb400;text-decoration:none}
-.search{flex:1;margin:0 10px;background:#222;border-radius:20px;display:flex;align-items:center;padding:6px 12px}
-.search input{flex:1;background:transparent;border:none;color:#fff;outline:none}
-.btn{padding:8px 14px;border-radius:20px;border:none;font-weight:bold;text-decoration:none;display:inline-block}
-.btn-yellow{background:#ffb400;color:#000}
-.btn-white{background:#fff;color:#000}
-.hero{background:linear-gradient(135deg,#000,#333);color:#fff;padding:20px 15px;text-align:center}
-.products{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px}
+*{box-sizing:border-box;font-family:Arial} body{margin:0;background:#f7f7f8;padding-bottom:80px}
+.top{background:#0f1115;color:#fff;padding:14px 16px 70px;border-radius:0 0 24px 24px}
+.logo{font-weight:900;color:#ffc300;font-size:20px}
+.search{margin-top:12px;background:#fff;border-radius:16px;padding:10px 14px;display:flex;gap:8px}
+.search input{border:none;outline:none;flex:1}
+.banner{margin:-50px 14px 10px;background:linear-gradient(135deg,#5a2dff,#8e4dff);border-radius:18px;padding:18px;color:#fff}
+.banner button{background:#ffd500;border:none;padding:10px 18px;border-radius:12px;font-weight:800;margin-top:8px}
+.cats{padding:10px 14px}.cat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;text-align:center}
+.cat-grid div{background:#fff;border-radius:14px;padding:10px 4px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.products{padding:10px 14px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.06)}
-.card img{width:100%;height:160px;object-fit:cover}
-.card-body{padding:10px}
-.price{color:green;font-weight:900}
-.shop{color:#888;font-size:12px}
-#langFloat{position:fixed;bottom:20px;right:20px;z-index:9999;background:#000;color:#fff;padding:10px 14px;border-radius:25px;box-shadow:0 4px 15px rgba(0,0,0,.3);border:2px solid #ffb400}
-#langFloat select{background:transparent;color:#fff;border:none;font-weight:bold;outline:none}
-#google_translate_element{display:none}
-.topbar{display:flex;gap:8px;overflow-x:auto;padding:10px;background:#fff;border-bottom:1px solid #eee}
-.topbar button{white-space:nowrap;padding:8px 14px;border-radius:20px;border:1px solid #ddd;background:#fff}
+.card img{width:100%;height:150px;object-fit:cover}
+.card-body{padding:8px}.price{font-weight:900}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #eee}
 </style>
 </head>
 <body>
-
-<!-- HEADER -->
-<div class="header">
-<a href="index.html" class="logo">REALITY MALL</a>
-<div class="search"><input id="q" placeholder="Search products in Warri..." oninput="filter()"><span>🔍</span></div>
-<div style="display:flex;gap:6px">
-<a href="signup.html" class="btn btn-yellow">Sign Up</a>
-<a href="dashboard.html" class="btn btn-white">+ Post</a>
-</div>
+<div class="top">
+<div style="display:flex;justify-content:space-between;align-items:center"><div class="logo">REALITY<br>MALL</div><div>📍 Warri</div></div>
+<div class="search">🔍 <input id="q" placeholder="Search products in Warri..." oninput="render()"></div>
 </div>
 
-<!-- HERO -->
-<div class="hero">
-<h2 id="hero1" style="margin:0">Warri No.1 Online Mall 🛒</h2>
-<p id="hero2" style="margin:6px 0;color:#ccc">Buy & Sell in Warri, Ughelli, Sapele - Same Day Delivery</p>
-<div style="margin-top:12px">
-<a href="signup.html" class="btn btn-yellow">Create Free Shop</a>
-<a href="profile.html?shop=Odera%20chidalu%20vitalis" class="btn btn-white" style="margin-left:6px">View My Profile</a>
+<div class="banner">
+<h2 style="margin:0">BIG MONTH SALE<br>Up to 60% OFF</h2>
+<small>On Phones, Electronics & Fashion</small><br>
+<button onclick="location.href='dashboard.html'">Shop Now →</button>
+</div>
+
+<div class="cats">
+<div style="display:flex;justify-content:space-between"><h3>Categories</h3><span style="color:#c79b00">See all</span></div>
+<div class="cat-grid">
+<div onclick="filterCat('phones')">📱<br><small>Phones</small></div>
+<div onclick="filterCat('fashion')">👕<br><small>Fashion</small></div>
+<div onclick="filterCat('electronics')">💻<br><small>Electronics</small></div>
+<div onclick="filterCat('home')">🏠<br><small>Home</small></div>
+<div onclick="filterCat('groceries')">🥕<br><small>Groceries</small></div>
 </div>
 </div>
 
-<!-- CATEGORIES -->
-<div class="topbar">
-<button onclick="cat='all';load()">All</button>
-<button onclick="cat='phones';load()">Phones</button>
-<button onclick="cat='fashion';load()">Fashion</button>
-<button onclick="cat='electronics';load()">Electronics</button>
-<button onclick="cat='home';load()">Home</button>
-<button onclick="cat='services';load()">Services -
+<div class="products" id="products">Loading products from Supabase...</div>
+
+<div class="nav">
+<div onclick="location.href='index.html'">🏠<br>Home</div>
+<div onclick="location.href='dashboard.html'">+<br>Post</div>
+<div onclick="location.href='chat.html'">💬<br>Chat</div>
+<div onclick="location.href='login.html'">👤<br>Login</div>
+</div>
+
+<script>
+const supa=supabase.createClient('https://trawtkndvzsplcmmtjox.supabase.co','sb_publishable_ACkUQyZDMHThA7SYE1ME2w_HMNjyIXg');
+let allProducts=[
+  {id:'1',shop_name:'Odera chidalu Vitalis',content:'Oraimo Powerbank 20000mAh',price:12500,image:'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=400'},
+  {id:'2',shop_name:'OC GLOBAL TECH',content:'Samsung Earbuds Pro',price:9800,image:'https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?w=400'},
+  {id:'3',shop_name:'Warri Fashion',content:'Nike Air Runner Sneakers',price:25000,image:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400'}
+];
+
+async function load(){
+ try{
+  let {data,error}=await supa.from('products').select('*').order('created_at',{ascending:false});
+  if(!error && data && data.length>0) allProducts=data;
+ }catch(e){console.log('Supabase error, using demo',e)}
+ render();
+}
+function render(){
+ let q=document.getElementById('q').value.toLowerCase();
+ let list=allProducts.filter(p=>p.content.toLowerCase().includes(q) || p.shop_name.toLowerCase().includes(q));
+ document.getElementById('products').innerHTML=list.map(p=>`
+  <div class="card" onclick="location.href='product.html?id=${p.id}'">
+  <img src="${p.image}">
+  <div class="card-body">
+  <small style="color:#888">@${p.shop_name}</small>
+  <div style="font-size:13px">${p.content.slice(0,40)}</div>
+  <div class="price">₦${(p.price||0).toLocaleString()}</div>
+  </div></div>`).join('') || '<div style=grid-column:1/3;text-align:center;padding:20px> No products. <a href=dashboard.html>Post first product</a></div>';
+}
+function filterCat(c){document.getElementById('q').value=c; render()}
+load();
+</script>
+</body>
+</html>
