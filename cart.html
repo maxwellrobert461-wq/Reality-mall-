@@ -1,28 +1,63 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Cart - REALITY MALL</title>
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wallet - REALITY MALL</title>
 <script src="https://js.paystack.co/v1/inline.js"></script>
-<style>body{margin:0;font-family:Arial;background:#2a3a4a;display:flex;justify-content:center}.sheet{background:#fff;width:100%;max-width:420px;min-height:100vh;border-radius:24px 24px 0 0;margin-top:20px;padding:20px}.item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #eee}.qty{display:flex;align-items:center;gap:8px}.qty button{width:32px;height:32px;border-radius:50%;border:1px solid #ddd;background:#f0f2f5}.total{display:flex;justify-content:space-between;font-weight:800;font-size:18px;margin:12px 0}.checkout{width:100%;padding:14px;background:#0d63f2;color:#fff;border:none;border-radius:12px;font-weight:800;font-size:16px}</style>
+<style>
+*{box-sizing:border-box;font-family:Arial} body{margin:0;background:#f5f6f8;padding-bottom:90px}
+.top{background:#0f1115;color:#fff;padding:12px 14px;display:flex;justify-content:space-between}
+.balance{background:linear-gradient(135deg,#1a2332,#2a3a4a);color:#fff;margin:14px;border-radius:16px;padding:18px}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 14px}
+.btn{padding:14px;border:none;border-radius:12px;font-weight:800;color:#fff}
+.red{background:#ff2d55} .blue{background:#0d63f2}
+.card{background:#fff;margin:14px;border-radius:12px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.bar{display:flex;align-items:end;gap:4px;height:80px;margin-top:10px}
+.bar div{flex:1;background:#0d63f2;border-radius:4px 4px 0 0}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #eee}
+</style>
 </head><body>
-<div class="sheet">
-<div style="display:flex;justify-content:space-between"><h2>Shopping Cart</h2><button onclick="location.href='index.html'" style="border:none;background:#f0f0f0;width:32px;height:32px;border-radius:50%">✕</button></div>
-<div style="display:flex;gap:10px;font-size:12px;margin:10px 0"><span>🇳🇬 Nigeria · NGN</span><span>🇬🇭 Ghana · GHS</span></div>
-<div id="items"></div>
-<div style="margin-top:20px"><h3>Order Summary</h3><div style="display:flex;justify-content:space-between"><span>Subtotal · NGN</span><b id="sub">₦30,000</b></div><div style="display:flex;justify-content:space-between"><span>Delivery · NGN</span><b>₦500</b></div><hr><div class="total"><span>Total · NGN</span><span id="tot" style="color:#0d63f2">₦30,500</span></div>
-<button class="checkout" onclick="pay()"> <span style="background:#fff;color:#0d63f2;padding:2px 6px;border-radius:4px">paystack</span> Checkout</button>
-<p style="font-size:11px;text-align:center;color:#666">🔒 Secured by Paystack · Payments powered by Paystack<br>You are paying in NGN. For Ghana, amount will be converted to GHS at checkout.</p>
-<p style="font-size:11px;color:#666;text-align:center;margin-top:8px">App fee: 2% - Seller gets 98%. On withdrawal, extra 2% fee.</p>
+<div class="top"><div><a href="index.html" style="color:#fff;text-decoration:none">←</a> <b>Wallet - REALITY MALL</b></div><div>🔔</div></div>
+<div class="balance">
+<div style="display:flex;justify-content:space-between;font-size:13px;color:#9fb0c8"><span>📁 Balance</span><span>🪙 Coins 0</span></div>
+<h1 style="font-size:48px;margin:8px 0">₦<span id="bal">0</span></h1>
+<div style="font-size:12px;color:#9fb0c8">Available • <span id="vStatus">Not Verified</span> • Paystack Live: pk_live_16a8...</div>
 </div>
+<div class="btns">
+<button class="btn red" onclick="alert('Pick boost below!')">📢 Promote Your Shop</button>
+<button class="btn blue" onclick="verify()">🛡️ <span id="vText">Verify Now<br>₦10,000</span></button>
+</div>
+<div class="card">
+<h3 style="margin:0">Dashboard - Last 7 days ▾</h3>
+<div class="bar">
+<div style="height:30%"></div><div style="height:50%"></div><div style="height:40%"></div><div style="height:80%"></div><div style="height:60%"></div><div style="height:90%"></div><div style="height:70%"></div>
+</div>
+<div style="display:flex;justify-content:space-between;font-size:12px;margin-top:8px"><div>Mon Tue Wed Thu Fri Sat Sun</div></div>
+<div style="display:flex;justify-content:space-between;margin-top:10px"><div>Earnings<br><b style="color:#0d63f2">+₦<span id="earn">0</span></b></div><div>Views boosted<br><b>1.2K</b></div></div>
+</div>
+<div class="card" style="background:#fff7e6;border:1px solid #ffb400">
+<h3>🔥 Boost for More Views - Pay with YOUR Paystack LIVE</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+<button onclick="buyBoost(2500,'Product Boost')" style="padding:10px;border-radius:10px;background:#fff;border:1px solid #ffb400;font-weight:700">Product<br>₦2,500 - 850 views</button>
+<button onclick="buyBoost(5000,'Shop Boost')" style="padding:10px;border-radius:10px;background:#ffb400;border:none;font-weight:700">Shop<br>₦5,000 - 2K views</button>
+<button onclick="buyBoost(10000,'Premium')" style="padding:10px;border-radius:10px;background:#0d63f2;color:#fff;border:none;font-weight:700">Premium<br>₦10,000 - 5K</button>
+<button onclick="buyBoost(20000,'Viral')" style="padding:10px;border-radius:10px;background:#fff;border:1px solid #0d63f2;font-weight:700">Viral<br>₦20,000 - 15K</button>
+</div>
+</div>
+<div class="nav">
+<div onclick="location.href='index.html'">🏠<br>Home</div>
+<div onclick="location.href='shop.html'">🛍️<br>Shop</div>
+<div onclick="location.href='post.html'" style="background:#000;color:#fff;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center">+</div>
+<div onclick="location.href='chat.html'">✉️<br>Inbox</div>
+<div style="color:#ff2d55">👤<br>Wallet</div>
 </div>
 <script>
-let cart=[{name:'Wireless Headphones',price:12000,qty:2,cat:'Electronics · Black',img:'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=200'},{name:'USB-C Cable',price:6000,qty:1,cat:'Accessory · 1m',img:'https://images.unsplash.com/photo-1587037542707-9477e2af64d8?w=200'}];
-function render(){document.getElementById('items').innerHTML=cart.map((c,i)=>`<div class="item"><img src="${c.img}" style="width:70px;height:70px;border-radius:12px;background:#f5f5f5"><div style="flex:1"><b>${c.name}</b> <b style="float:right">₦${c.price.toLocaleString()}</b><br><small>${c.cat}</small><div class="qty" style="margin-top:8px;justify-content:flex-end"><button onclick="changeQty(${i},-1)">−</button><b style="width:28px;text-align:center;background:#f0f2f5;border-radius:50%;padding:4px">${c.qty}</b><button onclick="changeQty(${i},1)">+</button></div></div></div>`).join('');let sub=cart.reduce((s,c)=>s+c.price*c.qty,0);document.getElementById('sub').innerText='₦'+sub.toLocaleString();document.getElementById('tot').innerText='₦'+(sub+500).toLocaleString()}
-function changeQty(i,d){cart[i].qty+=d; if(cart[i].qty<1)cart.splice(i,1); render()}
-function pay(){
- let total=cart.reduce((s,c)=>s+c.price*c.qty,0)+500;
- let key='pk_live_16a8e4130e54cdbd8eb5a693ae37a52d874e3ee0';
- let fee=Math.floor(total*0.02);
- PaystackPop.setup({key:key,email:'buyer@realitymall.com',amount:total*100,currency:'NGN',ref:'RM_'+Date.now(),callback:function(res){alert('Payment success! Ref: '+res.reference+'\nTotal: ₦'+total+'\nApp fee 2%: ₦'+fee+'\nSeller gets: ₦'+(total-fee)+'\n\nWithdraw fee: Extra 2% when seller withdraws.'); location.href='wallet.html'},onClose:function(){}}).openIframe();
+const MY_KEY='pk_live_16a8e4130e54cdbd8eb5a693ae37a52d874e3ee0';
+function load(){let w=JSON.parse(localStorage.getItem('wallet')||'{"balance":0,"verified":false}'); document.getElementById('bal').innerText=w.balance.toLocaleString(); document.getElementById('earn').innerText=w.balance; if(w.verified){document.getElementById('vStatus').innerHTML='✔️ Verified'; document.getElementById('vText').innerHTML='✔️ Verified';}}
+function verify(){
+ let w=JSON.parse(localStorage.getItem('wallet')||'{"balance":0,"verified":false}');
+ if(w.verified) return alert('Already verified!');
+ PaystackPop.setup({key:MY_KEY,email:localStorage.getItem('myEmail')||'chidaluvitalisodera@gmail.com',amount:10000*100,currency:'NGN',ref:'VERIFY_'+Date.now(),callback:function(r){alert('Verified! Ref: '+r.reference+'\n₦10,000 paid to YOUR Paystack\nFee 2% = ₦200 yours\nBlue tick active!'); w.verified=true; localStorage.setItem('wallet',JSON.stringify(w)); load();}}).openIframe();
 }
-render();
+function buyBoost(price,name){ PaystackPop.setup({key:MY_KEY,email:'buyer@realitymall.com',amount:price*100,currency:'NGN',ref:'BOOST_'+Date.now(),callback:function(r){alert(name+' ACTIVE! Ref: '+r.reference+'\nPaid ₦'+price+' to YOUR Paystack'); let w=JSON.parse(localStorage.getItem('wallet')||'{"balance":0,"verified":false}'); w.balance+=price; localStorage.setItem('wallet',JSON.stringify(w)); load();}}).openIframe(); }
+load();
 </script>
 </body></html>
