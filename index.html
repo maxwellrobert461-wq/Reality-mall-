@@ -1,108 +1,59 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>REALITY MALL - Warri No.1</title>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>REALITY MALL - Shops</title>
 <style>
-*{box-sizing:border-box;font-family:Arial} body{margin:0;background:#f7f7f8;padding-bottom:80px}
-.top{background:#0f1115;color:#fff;padding:14px 16px 70px;border-radius:0 0 24px 24px}
-.logo{font-weight:900;color:#ffc300;font-size:20px}
-.search{margin-top:12px;background:#fff;border-radius:16px;padding:10px 14px;display:flex;gap:8px}
-.search input{border:none;outline:none;flex:1}
-.banner{margin:-50px 14px 10px;background:linear-gradient(135deg,#5a2dff,#8e4dff);border-radius:18px;padding:18px;color:#fff}
-.banner button{background:#ffd500;border:none;padding:10px 18px;border-radius:12px;font-weight:800;margin-top:8px}
-.cats{padding:10px 14px}.cat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;text-align:center}
-.cat-grid div{background:#fff;border-radius:14px;padding:10px 4px;box-shadow:0 2px 8px rgba(0,0,0,.05);cursor:pointer}
-.products{padding:10px 14px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.06)}
-.card img{width:100%;height:150px;object-fit:cover}
-.card-body{padding:8px}.price{font-weight:900}
-.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #eee}
-.err{padding:10px;background:#ffe0e0;border-radius:8px;margin:10px 14px;color:red;font-size:13px}
+*{box-sizing:border-box;font-family:Arial} body{margin:0;background:#f5f6f8;padding-bottom:70px}
+.top{padding:10px 14px;background:#fff;position:sticky;top:0;z-index:10}
+.search{display:flex;gap:8px}.search input{flex:1;padding:12px;border-radius:24px;border:1px solid #ddd;background:#f0f2f5}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding:10px 14px}.tab{padding:8px 18px;border-radius:20px;border:none;background:#e4e6eb;font-weight:600}.tab.active{background:#0d63f2;color:#fff}
+.shops{padding:0 10px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card{background:#fff;border-radius:16px;overflow:hidden;padding:0 0 10px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.card img.prod{width:100%;height:120px;object-fit:cover;background:#eee}
+.card.info{padding:8px}.stars{color:#ffb400;font-size:12px}.price{font-size:12px;margin:2px 0}
+.btn{width:90%;margin:6px 5%;padding:8px;background:#0d63f2;color:#fff;border:none;border-radius:20px;font-weight:700}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:8px 0;border-top:1px solid #ddd}
+.nav div{text-align:center;font-size:11px}.nav.active{color:#0d63f2}
 </style>
-</head>
-<body>
+</head><body>
 <div class="top">
-<div style="display:flex;justify-content:space-between"><div class="logo">REALITY<br>MALL</div><div>📍 Warri</div></div>
-<div class="search">🔍 <input id="q" placeholder="Search products..." oninput="render()"></div>
+<div style="display:flex;justify-content:space-between;align-items:center"><h2 style="color:#0d3c9c;margin:0">Shops</h2><div style="display:flex;gap:14px">🔍 💬 🔔</div></div>
+<div class="search" style="margin-top:10px"><input id="q" placeholder="Search shops, products, categories..." oninput="render()"></div>
 </div>
-
-<div class="banner">
-<h2 style="margin:0">BIG MONTH SALE<br>Up to 60% OFF</h2>
-<small>On Phones, Electronics & Fashion</small><br>
-<button onclick="location.href='dashboard.html'">+ Post Product - Free</button>
+<div class="tabs">
+<button class="tab active" onclick="filterCat('')">All</button>
+<button class="tab" onclick="filterCat('fashion')">Fashion</button>
+<button class="tab" onclick="filterCat('electronics')">Electronics</button>
 </div>
-
-<div id="supabaseErr" class="err" style="display:none"></div>
-
-<div class="cats">
-<div style="display:flex;justify-content:space-between"><h3>Categories</h3><span style="color:#c79b00">See all</span></div>
-<div class="cat-grid">
-<div onclick="filterCat('powerbank')">📱<br><small>Phones</small></div>
-<div onclick="filterCat('fashion')">👕<br><small>Fashion</small></div>
-<div onclick="filterCat('samsung')">💻<br><small>Electronics</small></div>
-<div onclick="filterCat('nike')">🏠<br><small>Home</small></div>
-<div onclick="filterCat('')">🥕<br><small>All</small></div>
-</div>
-</div>
-
-<div class="products" id="products"></div>
-
+<div style="padding:0 14px;display:flex;justify-content:space-between"><h3 style="margin:6px 0">Shops</h3><small id="count">12 shops found</small></div>
+<div id="shops" class="shops"></div>
 <div class="nav">
-<div onclick="location.href='index.html'">🏠<br>Home</div>
-<div onclick="location.href='dashboard.html'">+<br>Post</div>
-<div onclick="location.href='chat.html'">💬<br>Chat</div>
-<div onclick="location.href='login.html'">👤<br>Login</div>
+<div class="active">🏠<br>Home</div><div onclick="location.href='shop.html'">🛍️<br>Shop</div><div onclick="location.href='dashboard.html'" style="background:#000;color:#fff;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px">+</div><div onclick="location.href='chat.html'">✉️<br>Inbox</div><div onclick="location.href='wallet.html'">👤<br>Wallet</div>
 </div>
-
 <script>
-// PRODUCTS - Works even without Supabase! Uses phone storage
-let defaultProducts=[
-  {id:'1',shop_name:'Odera chidalu Vitalis',phone:'+2349078617514',content:'Oraimo Powerbank 20000mAh - Fast Charge',price:12500,image:'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=400'},
-  {id:'2',shop_name:'OC GLOBAL TECH',phone:'+2349078617514',content:'Samsung Earbuds Pro - Original',price:9800,image:'https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?w=400'},
-  {id:'3',shop_name:'Warri Fashion',phone:'+2349078617514',content:'Nike Air Runner Sneakers - Size 42',price:25000,image:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400'},
-  {id:'4',shop_name:'Odera chidalu Vitalis',phone:'+2349078617514',content:'Looking happy - New Arrival',price:15000,image:'https://via.placeholder.com/400?text=Looking+Happy'}
+let data=[
+ {name:'Odera Fashion',img:'https://images.unsplash.com/photo-1551232864-3f0890e580d9?w=300',prod:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300',rating:'4.8 (128 reviews)',priceN:'₦15,000 NGN',priceG:'GH₵120 GHS',priceU:'$20 USD'},
+ {name:'OC GLOBAL TECH',img:'https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=300',prod:'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=300',rating:'4.8 (96 reviews)',priceN:'₦12,500 NGN',priceG:'GH₵98 GHS',priceU:'$16 USD'},
+ {name:'Warri Gadgets',img:'https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?w=300',prod:'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=300',rating:'4.9 (310 reviews)',priceN:'₦9,800 NGN',priceG:'GH₵75 GHS',priceU:'$13 USD'},
+ {name:'Reality Mall Official',img:'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=300',prod:'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=300',rating:'4.9 (2k reviews)',priceN:'₦27,000 NGN',priceG:'GH₵210 GHS',priceU:'$35 USD'},
 ];
-
-function getProducts(){
-  let saved = JSON.parse(localStorage.getItem('reality_products')||'[]');
-  return [...saved, ...defaultProducts];
-}
-
 function render(){
  let q=document.getElementById('q').value.toLowerCase();
- let list=getProducts().filter(p=>p.content.toLowerCase().includes(q) || p.shop_name.toLowerCase().includes(q));
- document.getElementById('products').innerHTML=list.map(p=>`
-  <div class="card" onclick="alert('Call seller: '+p.phone)">
-  <img src="${p.image}" onerror="this.src='https://via.placeholder.com/400?text=REALITY+MALL'">
-  <div class="card-body">
-  <small style="color:#888">@${p.shop_name}</small>
-  <div style="font-size:13px;font-weight:600">${p.content.slice(0,40)}</div>
-  <div class="price">₦${(p.price||0).toLocaleString()}</div>
-  <small style="color:green">📞 ${p.phone}</small>
-  </div></div>`).join('');
+ let list=data.filter(d=>d.name.toLowerCase().includes(q));
+ document.getElementById('count').innerText=list.length+' shops found';
+ document.getElementById('shops').innerHTML=list.map(d=>`
+  <div class="card" onclick="location.href='shop.html?name=${d.name}'">
+  <img class="prod" src="${d.prod}">
+  <div class="info">
+  <div style="display:flex;align-items:center;gap:6px"><img src="https://i.pravatar.cc/30" style="border-radius:50%"><b>${d.name}</b> <span style="color:#0d63f2">✔️</span></div>
+  <div class="stars">⭐⭐⭐⭐⭐ ${d.rating}</div>
+  <div class="price">🇳🇬 ${d.priceN} <small style="color:#888">Naira</small></div>
+  <div class="price">🇬🇭 ${d.priceG} <small style="color:#888">GHS Cedi</small></div>
+  <div class="price">🇺🇸 ${d.priceU} <small style="color:#888">USD Dollar</small></div>
+  </div>
+  <button class="btn">Visit Shop</button>
+  </div>`).join('');
 }
 function filterCat(c){document.getElementById('q').value=c; render()}
-
-// Try Supabase but don't block if error
-(async()=>{
- try{
-  const {createClient}=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
-  const supa=createClient('https://trawtkndvzsplcmmtjox.supabase.co','sb_publishable_ACkUQyZDMHThA7SYE1ME2w_HMNjyIXg');
-  let {data,error}=await supa.from('products').select('*').limit(20);
-  if(error) throw error;
-  if(data && data.length>0){
-    localStorage.setItem('reality_products', JSON.stringify(data));
-    render();
-  }
- }catch(e){
-  document.getElementById('supabaseErr').style.display='block';
-  document.getElementById('supabaseErr').innerHTML='⚠️ Supabase Error: '+e.message+'<br>Showing offline products. Fix: Go to Supabase SQL Editor > Run: <b>alter table products disable row level security;</b>';
-  console.log(e);
- }
-})();
-
 render();
 </script>
-</body>
-</html>
+</body></html>
