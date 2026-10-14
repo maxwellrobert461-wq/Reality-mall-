@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Create Post - REALITY MALL</title>
+<style>
+*{box-sizing:border-box;font-family:Arial} body{margin:0;background:#f0f2f5;padding-bottom:80px}
+.top{background:#fff;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #ddd;position:sticky;top:0;z-index:10}
+.createBox{background:#fff;margin:12px;border-radius:12px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.galleryBtn{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.gBtn{padding:14px;border-radius:12px;border:2px dashed #0d63f2;background:#eef3ff;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
+.preview{width:100%;max-height:350px;border-radius:12px;margin-top:10px;object-fit:cover;display:none;background:#000}
+textarea{width:100%;padding:12px;border-radius:12px;border:1px solid #ddd;font-size:15px;min-height:80px;margin-top:10px;resize:none}
+.reelOption{background:#fff7e6;border:1px solid #ffb400;border-radius:12px;padding:12px;margin-top:10px;display:none}
+.toggle{width:44px;height:26px;background:#ccc;border-radius:20px;position:relative;cursor:pointer}.toggle.on{background:#0d63f2}.toggle:after{content:'';width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:3px;left:3px;transition:.2s}.toggle.on:after{left:21px}
+.postBtn{width:100%;padding:14px;background:#0d63f2;color:#fff;border:none;border-radius:12px;font-weight:800;font-size:16px;margin-top:12px}
+.feed{background:#fff;margin:12px;border-radius:12px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #eee;z-index:20}
+input[type=file]{display:none}
+</style>
+</head><body>
+<div class="top">
+<div><a href="index.html" style="text-decoration:none">←</a> <b>Create Post</b></div>
+<button onclick="doPost()" style="background:#0d63f2;color:#fff;border:none;padding:8px 16px;border-radius:20px;font-weight:800">Post</button>
+</div>
+
+<div class="createBox">
+<div style="display:flex;gap:10px;align-items:center">
+<img src="https://i.pravatar.cc/40?img=5" style="width:40px;height:40px;border-radius:50%">
+<div><b>Odera Fashion</b><br><small style="color:#888">Warri • Public 🌎</small></div>
+</div>
+<textarea id="caption" placeholder="What's on your mind? Sell your product in Warri..."></textarea>
+
+<div class="galleryBtn">
+<label for="photoInput" class="gBtn">🖼️ Photo<br><small>Gallery</small></label>
+<input type="file" id="photoInput" accept="image/*" onchange="previewFile(this,'image')">
+<label for="videoInput" class="gBtn">🎥 Video<br><small>Gallery</small></label>
+<input type="file" id="videoInput" accept="video/*" onchange="previewFile(this,'video')">
+</div>
+
+<img id="imgPreview" class="preview">
+<video id="videoPreview" class="preview" controls></video>
+
+<div id="reelBox" class="reelOption">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div><b>🎬 Post as Reel Video?</b><br><small>Reels get 10x more views in Warri feed. If YES, video appears in Reels tab + boost.</small></div>
+<div id="reelToggle" class="toggle" onclick="toggleReel()"></div>
+</div>
+<div id="reelInfo" style="font-size:12px;margin-top:8px;color:#555;display:none">✅ Will be posted as Reel - Will get boosted + appear on homepage!</div>
+</div>
+
+<div style="display:flex;gap:8px;margin-top:12px;font-size:13px">
+<span style="background:#f0f2f5;padding:6px 12px;border-radius:16px">📍 Add Location: Warri</span>
+<span style="background:#f0f2f5;padding:6px 12px;border-radius:16px">🏷️ Tag Product</span>
+</div>
+
+<button class="postBtn" onclick="doPost()">📢 Post to Reality Mall Feed</button>
+<p style="font-size:11px;color:#888;text-align:center;margin-top:8px">Your post will appear on Shops feed. Verified shops get 3x boost.</p>
+</div>
+
+<h3 style="padding:0 14px">Feed - Recent Posts</h3>
+<div id="feedList"></div>
+
+<div class="nav">
+<div onclick="location.href='index.html'">🏠<br>Home</div>
+<div onclick="location.href='shop.html'">🛍️<br>Shop</div>
+<div style="background:#000;color:#fff;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:-10px">+</div>
+<div onclick="location.href='chat.html'">✉️<br>Inbox</div>
+<div onclick="location.href='wallet.html'">👤<br>Wallet</div>
+</div>
+
+<script>
+let selectedType=null, selectedData=null, isReel=false;
+function previewFile(input,type){
+ let file=input.files[0]; if(!file) return;
+ selectedType=type;
+ let reader=new FileReader();
+ reader.onload=e=>{
+  selectedData=e.target.result;
+  if(type=='image'){
+   document.getElementById('imgPreview').src=selectedData; document.getElementById('imgPreview').style.display='block';
+   document.getElementById('videoPreview').style.display='none'; document.getElementById('reelBox').style.display='none';
+  } else {
+   document.getElementById('videoPreview').src=selectedData; document.getElementById('videoPreview').style.display='block';
+   document.getElementById('imgPreview').style.display='none'; document.getElementById('reelBox').style.display='block';
+  }
+ };
+ reader.readAsDataURL(file);
+}
+function toggleReel(){
+ isReel=!isReel; document.getElementById('reelToggle').classList.toggle('on',isReel);
+ document.getElementById('reelInfo').style.display=isReel?'block':'none';
+}
+function getPosts(){return JSON.parse(localStorage.getItem('reality_posts')||'[]')}
+function setPosts(p){localStorage.setItem('reality_posts',JSON.stringify(p))}
+function doPost(){
+ let text=document.getElementById('caption').value.trim();
+ if(!text&&!selectedData) return alert('Write something or choose photo/video from gallery!');
+ let post={
+  id:Date.now(), text:text, media:selectedData, type:selectedType, reel:isReel&&selectedType=='video',
+  shop:'Odera Fashion', avatar:'https://i.pravatar.cc/40?img=5', time:'Just now', likes:Math.floor(Math.random()*50), verified:true
+ };
+ let posts=getPosts(); posts.unshift(post); setPosts(posts);
+ alert((post.reel?'🎬 Reel Video Posted!':'📸 Post Created!')+'\n\n'+(post.reel?'Your reel will get 10x views + boost in Warri!':'Your post is live on Reality Mall feed!')+'\n\nIf you are verified with ₦10,000 you get 3x more views!');
+ document.getElementById('caption').value=''; selectedData=null; selectedType=null;
+ document.getElementById('imgPreview').style.display='none'; document.getElementById('videoPreview').style.display='none'; document.getElementById('reelBox').style.display='none';
+ renderFeed();
+ // Go to home to see feed
+ if(confirm('Post success! View in Shops feed?')) location.href='index.html#feed';
+}
+function renderFeed(){
+ let posts=getPosts();
+ if(posts.length==0){
+  // Sample posts
+  posts=[
+   {shop:'Odera Fashion',avatar:'https://i.pravatar.cc/40?img=5',text:'New Nike Shoes available! ₦15,000 in Warri. DM for delivery! 👟',media:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400',type:'image',time:'2h ago',likes:24,verified:true,reel:false},
+   {shop:'Warri Gadgets',avatar:'https://i.pravatar.cc/40?img=12',text:'AirPods Pro original - Check my reel video! 🎥',media:'',type:'',time:'5h ago',likes:12,verified:false,reel:true},
+  ];
+ }
+ document.getElementById('feedList').innerHTML=posts.map(p=>`
+ <div class="feed">
+ <div style="display:flex;gap:8px;align-items:center"><img src="${p.avatar}" style="width:36px;height:36px;border-radius:50%"><div><b>${p.shop} ${p.verified?'✔️':''}</b><br><small style="color:#888">${p.time} • ${p.reel?'🎬 Reel':''} Warri</small></div><div style="margin-left:auto">•••</div></div>
+ <p style="margin:10px 0;font-size:14px">${p.text}</p>
+ ${p.media? (p.type=='image'? `<img src="${p.media}" style="width:100%;border-radius:12px;max-height:400px;object-fit:cover">` : `<video src="${p.media}" style="width:100%;border-radius:12px" controls></video>${p.reel?'<div style="background:#000;color:#fff;padding:4px 8px;border-radius:12px;display:inline-block;margin-top:6px;font-size:12px">🎬 Reel • 1.2K views</div>':''}`) : ''}
+ <div style="display:flex;justify-content:space-between;margin-top:10px;border-top:1px solid #eee;padding-top:8px;font-size:14px;color:#666">
+ <span>👍 Like (${p.likes})</span><span>💬 Comment</span><span onclick="location.href='chat.html'">✉️ Chat Seller</span><span>↗️ Share</span>
+ </div>
+ </div>`).join('');
+}
+renderFeed();
+</script>
+</body></html>
