@@ -1,29 +1,95 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wallet - Reality Mall</title>
+<script src="https://js.paystack.co/v1/inline.js"></script>
+<style>
+*{box-sizing:border-box;font-family:Arial} body{margin:0;background:#f0f2f5;padding-bottom:80px}
+.top{background:#fff;padding:14px;position:sticky;top:0;border-bottom:1px solid #ddd}
+.card{background:#fff;margin:10px;border-radius:16px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.balance{background:linear-gradient(135deg,#0d63f2,#4a90e2);color:#fff;border-radius:16px;padding:20px;margin:10px}
+.btn{width:100%;padding:14px;background:#0d63f2;color:#fff;border:none;border-radius:12px;font-weight:800;margin:6px 0;cursor:pointer;font-size:16px}
+.btnGreen{background:#1faa59} .btnBlack{background:#000}
+.badge{display:inline-block;padding:4px 10px;border-radius:12px;font-size:12px;font-weight:800}
+.verified{background:#e6f4ea;color:#137333} .not{background:#fce8e6;color:#a50e0e}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:8px 0;border-top:1px solid #eee}
+</style></head><body>
+<div class="top"><h2 style="margin:0;color:#0d3c9c">Wallet</h2></div>
+
+<div class="balance">
+<small>Wallet Balance</small>
+<h1 id="bal" style="margin:6px 0">₦0</h1>
+<div id="vBadge" class="badge not">Not Verified</div>
+</div>
+
+<div class="card">
+<h3 style="margin:0">Verify Shop - Blue Tick ✔️</h3>
+<p style="color:#666;font-size:14px">Get 3x more views, blue tick, trusted seller badge. Pay to YOUR Paystack LIVE account.</p>
+<button class="btn" onclick="verify()">Verify Now ₦10,000 - Get ₦500 Bonus!</button>
+<small style="color:green;font-weight:700">First 50 sellers get ₦500 FREE + Referral ₦200!</small>
+</div>
+
+<div class="card">
+<h3 style="margin:0">Add Money / Withdraw</h3>
+<button class="btn btnGreen" onclick="deposit()">Deposit with Paystack</button>
+<button class="btn btnBlack" onclick="withdraw()">Withdraw to Bank (2% fee)</button>
+<p style="font-size:12px;color:#888">Deposit is Paystack LIVE to your account. Withdraw goes to your bank.</p>
+</div>
+
+<div class="card">
+<b>Transactions</b>
+<div id="tx" style="font-size:13px;color:#555;margin-top:8px">No transactions yet</div>
+</div>
+
+<div class="nav">
+<div onclick="location.href='index.html'">🏠<br>Home</div>
+<div onclick="location.href='shop.html'">🛍️<br>Shop</div>
+<div style="width:52px;height:52px;background:#000;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin-top:-20px;border:3px solid #fff" onclick="location.href='post.html'">+</div>
+<div onclick="location.href='chat.html'">✉️<br>Inbox</div>
+<div style="color:#0d63f2;font-weight:800">👤<br>Wallet</div>
+</div>
+
+<script>
+const MY_KEY='pk_live_16a8e4130e54cdbd8eb5a693ae37a52d874e3ee0';
+function getWallet(){ let w=JSON.parse(localStorage.getItem('rm_wallet')||'{"balance":0,"verified":false,"tx":[]}'); return w; }
+function setWallet(w){ localStorage.setItem('rm_wallet',JSON.stringify(w)); }
+function load(){
+ let w=getWallet();
+ document.getElementById('bal').innerText='₦'+w.balance.toLocaleString();
+ document.getElementById('vBadge').innerText=w.verified?'✔️ Verified Seller':'Not Verified';
+ document.getElementById('vBadge').className='badge '+(w.verified?'verified':'not');
+ document.getElementById('tx').innerHTML=(w.tx||[]).slice(-10).reverse().map(t=>`<div>• ${t.type} ₦${t.amount} - ${t.ref||''} <small>${t.date||''}</small></div>`).join('')||'No transactions yet';
+}
+function deposit(){
+ let amt=prompt('Enter amount to deposit ₦'); if(!amt) return; amt=parseInt(amt);
+ PaystackPop.setup({key:MY_KEY,email:localStorage.getItem('myEmail')||'oderachidalu@gmail.com',amount:amt*100,currency:'NGN',ref:'DEP_'+Date.now(),
+ callback:function(r){ let w=getWallet(); w.balance+=amt; w.tx.push({type:'Deposit',amount:amt,ref:r.reference,date:new Date().toLocaleString()}); setWallet(w); alert('✅ Deposited ₦'+amt+' Ref:'+r.reference); load(); }
+ }).openIframe();
+}
+function withdraw(){
+ let w=getWallet(); if(w.balance<100) return alert('Min ₦100 to withdraw');
+ let amt=prompt('Withdraw amount, Balance ₦'+w.balance); if(!amt) return; amt=parseInt(amt);
+ if(amt>w.balance) return alert('Insufficient balance');
+ let fee=Math.ceil(amt*0.02); let net=amt-fee;
+ w.balance-=amt; w.tx.push({type:'Withdraw',amount:net,ref:'Fee ₦'+fee,date:new Date().toLocaleString()}); setWallet(w);
+ alert('✅ Withdrawal ₦'+net+' (Fee ₦'+fee+') sent to your bank!'); load();
+}
 function verify(){
  let w=getWallet(); if(w.verified) return alert('Already verified!');
  PaystackPop.setup({
-  key:MY_KEY,
-  email:localStorage.getItem('myEmail')||'oderachidalu@gmail.com',
-  amount:10000*100,currency:'NGN',ref:'VERIFY_'+Date.now(),
+  key:MY_KEY,email:localStorage.getItem('myEmail')||'oderachidalu@gmail.com',amount:10000*100,currency:'NGN',ref:'VERIFY_'+Date.now(),
   callback:function(r){
-   w.verified=true; 
-   // LAUNCH BONUS + REFERRAL
-   let isFirst50 = (parseInt(localStorage.getItem('userNumber')||'12') < 50);
-   let bonus = 0;
-   if(isFirst50) bonus += 500; // First 50 bonus
-   let usedRef = localStorage.getItem('usedRef');
-   if(usedRef){
-    // Give referrer ₦200
-    let cnt = parseInt(localStorage.getItem('ref_'+usedRef)||0);
-    // Add ₦200 to your wallet as referrer reward simulation
-    bonus += 200;
-    alert('🎉 Referral bonus! Your inviter '+usedRef+' gets ₦200 and you get ₦200 extra!');
-   }
-   w.balance += 500 + bonus; // ₦500 base + bonus
+   w.verified=true;
+   let isFirst50=(parseInt(localStorage.getItem('userNumber')||'12')<50);
+   let bonus=0; if(isFirst50) bonus+=500;
+   let usedRef=localStorage.getItem('usedRef');
+   if(usedRef){ bonus+=200; alert('🎉 Referral! '+usedRef+' gets ₦200, you get ₦200 extra!'); }
+   w.balance+=bonus; w.tx.push({type:'Verify Bonus',amount:bonus,ref:r.reference,date:new Date().toLocaleString()});
    setWallet(w);
-   alert('✅ Verified! Ref: '+r.reference+'\n\nPaid ₦10,000 to YOUR Paystack LIVE\nBlue tick ACTIVE!\n\nBONUS: ₦500 + Referral ₦'+bonus+' = ₦'+(500+bonus)+' added to wallet!\nBalance now ₦'+w.balance);
-   // Increase global user count
-   localStorage.setItem('userNumber', (parseInt(localStorage.getItem('userNumber')||'12')+1));
+   localStorage.setItem('userNumber',(parseInt(localStorage.getItem('userNumber')||'12')+1)+'');
+   alert('✅ Verified! Ref: '+r.reference+'\nPaid ₦10,000 to YOUR Paystack LIVE\nBlue tick ACTIVE!\nBonus ₦'+bonus+' added! Balance ₦'+w.balance);
    load();
   }
  }).openIframe();
 }
+load();
+</script>
+</body></html>
