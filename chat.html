@@ -1,18 +1,130 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Chat - REALITY MALL</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>body{margin:0;font-family:Arial}.top{background:#000;color:#fff;padding:12px}.msgs{height:70vh;overflow-y:auto;padding:10px}.msg{padding:8px 12px;border-radius:12px;margin:6px 0;max-width:70%}.me{background:#ffc300;margin-left:auto}.other{background:#eee}.input{position:fixed;bottom:0;left:0;right:0;display:flex;padding:10px;background:#fff}.input input{flex:1;padding:12px;border-radius:20px;border:1px solid #ddd}.input button{background:#000;color:#fff;border:none;padding:12px 18px;border-radius:20px;margin-left:6px}</style>
+<title>Inbox - REALITY MALL</title>
+<style>
+*{box-sizing:border-box;font-family:Arial} body{margin:0;background:#e5ddd5;display:flex;flex-direction:column;height:100vh}
+.top{background:#075e54;color:#fff;padding:10px 12px;display:flex;justify-content:space-between;align-items:center}
+.list{flex:1;overflow-y:auto;background:#fff}
+.chatItem{display:flex;gap:10px;padding:12px;border-bottom:1px solid #eee;cursor:pointer}
+.chatItem img{width:48px;height:48px;border-radius:50%}
+.chatPage{flex:1;display:flex;flex-direction:column;display:none}
+.msgs{flex:1;overflow-y:auto;padding:12px;background:url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');background-size:contain}
+.msg{padding:8px 12px;border-radius:12px;margin:6px 0;max-width:75%;font-size:14px;position:relative;word-wrap:break-word}
+.me{background:#dcf8c6;margin-left:auto;border-bottom-right-radius:0} .other{background:#fff;margin-right:auto;border-bottom-left-radius:0;box-shadow:0 1px 2px rgba(0,0,0,.1)}
+.msg img{max-width:100%;border-radius:8px;margin-top:4px}
+.audio{width:180px}
+.tools{display:flex;gap:6px;padding:8px;background:#f0f0f0;align-items:center;position:sticky;bottom:0}
+.tools input{flex:1;padding:12px 14px;border-radius:24px;border:1px solid #ddd;font-size:14px}
+.tools button{width:40px;height:40px;border:none;border-radius:50%;background:#075e54;color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center}
+.tools button.blue{background:#0d63f2}
+input[type=file]{display:none}
+</style>
 </head><body>
-<div class="top"><a href="index.html" style="color:#fff">← Mall</a> <span id="chatName">Chat</span> <button onclick="createGroup()" style="float:right;background:#ffc300;border:none;padding:6px 10px;border-radius:10px">+ Group</button></div>
+<div class="top" id="topBar">
+<div style="display:flex;gap:8px;align-items:center"><span onclick="showList()" style="cursor:pointer">←</span><b id="title">Inbox - REALITY MALL</b></div>
+<div><span onclick="createGroup()" style="background:#25d366;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:800;cursor:pointer">+ Group</span></div>
+</div>
+
+<div id="listPage" class="list">
+<div style="padding:10px"><input id="search" placeholder="Search chats..." style="width:100%;padding:10px;border-radius:20px;border:1px solid #ddd" oninput="renderList()"></div>
+<div id="chatList"></div>
+</div>
+
+<div id="chatPage" class="chatPage">
 <div id="msgs" class="msgs"></div>
-<div class="input"><input id="txt" placeholder="Type message..."><button onclick="send()">Send</button></div>
+<div class="tools">
+<label for="imgPick" style="width:40px;height:40px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid #ddd">📷</label>
+<input type="file" id="imgPick" accept="image/*,video/*" onchange="sendMedia(this)">
+<label for="filePick" style="width:40px;height:40px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid #ddd">📎</label>
+<input type="file" id="filePick" accept="*/*" onchange="sendMedia(this)">
+<input id="txt" placeholder="Type a message..." onkeypress="if(event.key=='Enter') sendText()">
+<button onclick="sendText()" class="blue">➤</button>
+<button id="voiceBtn" onmousedown="startVoice()" onmouseup="stopVoice()" ontouchstart="startVoice()" ontouchend="stopVoice()">🎤</button>
+</div>
+</div>
+
 <script>
-const client=supabase.createClient('https://trawtkndvzsplcmmtjox.supabase.co','sb_publishable_ACkUQyZDMHThA7SYE1ME2w_HMNjyIXg');
-let chatId=new URLSearchParams(location.search).get('id')||'global';
-async function load(){let {data}=await client.from('messages').select('*').eq('chat_id',chatId).order('created_at'); let h=''; data?.forEach(m=>{h+=`<div class="msg ${m.sender_id==localStorage.getItem('user_id')?'me':'other'}"><b>${m.sender_name}:</b> ${m.content}</div>`}); document.getElementById('msgs').innerHTML=h; document.getElementById('msgs').scrollTop=99999}
-async function send(){let c=txt.value; if(!c) return; await client.from('messages').insert([{chat_id:chatId,sender_id:localStorage.getItem('user_id')||'guest',sender_name:localStorage.getItem('myShop')||'Buyer',content:c}]); txt.value=''; load()}
-async function createGroup(){let name=prompt('Group name? e.g. Warri Phones Sellers'); if(!name) return; let {data}=await client.from('chats').insert([{type:'group',name:name,members:[localStorage.getItem('user_id')],created_by:localStorage.getItem('user_id')}]).select(); alert('Group created! ID: '+data[0].id); location.href='chat.html?id='+data[0].id}
-setInterval(load,2000); load();
+let sellers=[
+ {id:'odera',name:'Odera Fashion',phone:'+2349078617514',img:'https://i.pravatar.cc/100?img=5',last:'Nike Shoe ₦15,000 available - Tap to chat 1-on-1'},
+ {id:'oc',name:'OC GLOBAL TECH',phone:'+2349078617514',img:'https://i.pravatar.cc/100?img=8',last:'Samsung Earbuds ₦9,800 - Chat me directly'},
+ {id:'warri',name:'Warri Gadgets',phone:'+2348012345678',img:'https://i.pravatar.cc/100?img=12',last:'AirPods - Send picture to see more'},
+ {id:'official',name:'Reality Mall Official',phone:'+2349078617514',img:'https://i.pravatar.cc/100?img=15',last:'Verified Support - Send voice note'},
+ {id:'group_warri',name:'Warri Sellers Group (12 members)',phone:'group',img:'https://i.pravatar.cc/100?img=20',last:'Group chat - Everyone can send picture/video'},
+];
+let current=null, mediaRecorder, audioChunks=[];
+
+function getAll(){return JSON.parse(localStorage.getItem('reality_chat_v2')||'{}')}
+function saveAll(o){localStorage.setItem('reality_chat_v2',JSON.stringify(o))}
+
+function renderList(){
+ let q=document.getElementById('search').value.toLowerCase();
+ let html=''; sellers.filter(s=>s.name.toLowerCase().includes(q)).forEach(s=>{
+  html+=`<div class="chatItem" onclick="openChat('${s.id}')"><img src="${s.img}"><div style="flex:1"><div style="font-weight:800;display:flex;gap:6px">${s.name} <span style="color:#0d63f2;font-size:12px">${s.phone=='group'?'👥':'✔️'}</span></div><div style="font-size:13px;color:#666;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.last}</div></div><div style="font-size:11px;color:#888">2:25 AM</div></div>`;
+ });
+ document.getElementById('chatList').innerHTML=html;
+}
+function openChat(id){
+ current=id; document.getElementById('listPage').style.display='none'; document.getElementById('chatPage').style.display='flex';
+ document.getElementById('title').innerText=sellers.find(s=>s.id==id).name;
+ renderMsgs();
+}
+function showList(){document.getElementById('listPage').style.display='block'; document.getElementById('chatPage').style.display='none'; document.getElementById('title').innerText='Inbox - REALITY MALL';}
+function renderMsgs(){
+ let all=getAll(); let list=all[current]||[{me:false,text:'Hi! Welcome to Reality Mall 1-on-1 chat. You can now send:\n📷 Pictures\n🎥 Videos\n🎤 Voice notes\n📎 Files',time:'2:25 AM'}];
+ document.getElementById('msgs').innerHTML=list.map(m=>{
+  let content='';
+  if(m.type=='image') content=`<img src="${m.url}"><div>${m.text||''}</div>`;
+  else if(m.type=='video') content=`<video src="${m.url}" controls style="max-width:100%;border-radius:8px"></video><div>${m.text||''}</div>`;
+  else if(m.type=='audio') content=`<audio class="audio" src="${m.url}" controls></audio><div style="font-size:11px">Voice note • ${m.time}</div>`;
+  else content=m.text;
+  return `<div class="msg ${m.me?'me':'other'}">${content}<div style="font-size:10px;color:#888;text-align:right;margin-top:4px">${m.time||'2:25 AM'} ${m.me?'✔️✔️':''}</div></div>`;
+ }).join('');
+ document.getElementById('msgs').scrollTop=99999;
+}
+function sendText(){
+ let t=document.getElementById('txt').value.trim(); if(!t||!current) return;
+ let all=getAll(); if(!all[current]) all[current]=[];
+ all[current].push({me:true,text:t,time:new Date().toLocaleTimeString()}); saveAll(all); document.getElementById('txt').value=''; renderMsgs();
+ // auto reply
+ setTimeout(()=>{all[current].push({me:false,text:'Thanks! Seller will reply soon. For faster response call '+sellers.find(s=>s.id==current).phone,time:new Date().toLocaleTimeString()}); saveAll(all); renderMsgs();},800);
+}
+function sendMedia(input){
+ if(!input.files[0]||!current) return;
+ let file=input.files[0]; let reader=new FileReader();
+ reader.onload=e=>{
+  let all=getAll(); if(!all[current]) all[current]=[];
+  let type=file.type.startsWith('image')?'image':file.type.startsWith('video')?'video':'file';
+  all[current].push({me:true,type:type,url:e.target.result,text:file.name,time:new Date().toLocaleTimeString()});
+  saveAll(all); renderMsgs();
+ };
+ reader.readAsDataURL(file); input.value='';
+}
+// Voice note
+async function startVoice(){
+ if(!current) return;
+ try{
+  let stream=await navigator.mediaDevices.getUserMedia({audio:true});
+  mediaRecorder=new MediaRecorder(stream); audioChunks=[];
+  mediaRecorder.ondataavailable=e=>audioChunks.push(e.data);
+  mediaRecorder.onstop=()=>{
+   let blob=new Blob(audioChunks,{type:'audio/webm'});
+   let reader=new FileReader(); reader.onload=e=>{
+    let all=getAll(); if(!all[current]) all[current]=[];
+    all[current].push({me:true,type:'audio',url:e.target.result,time:new Date().toLocaleTimeString()});
+    saveAll(all); renderMsgs();
+   }; reader.readAsDataURL(blob);
+  };
+  mediaRecorder.start(); document.getElementById('voiceBtn').style.background='red'; document.getElementById('voiceBtn').innerText='● REC';
+ }catch(err){alert('Microphone permission needed for voice note')}
+}
+function stopVoice(){
+ if(mediaRecorder&&mediaRecorder.state=='recording'){mediaRecorder.stop(); document.getElementById('voiceBtn').style.background='#075e54'; document.getElementById('voiceBtn').innerText='🎤';}
+}
+function createGroup(){
+ let name=prompt('Group name? e.g. Warri Phones Hub'); if(!name) return;
+ sellers.unshift({id:'group_'+Date.now(),name:name+' (Group)',phone:'group',img:'https://i.pravatar.cc/100?img='+(Math.floor(Math.random()*70)+1),last:'New group - anyone can send picture/video/voice'});
+ renderList();
+}
+renderList();
 </script>
 </body></html>
