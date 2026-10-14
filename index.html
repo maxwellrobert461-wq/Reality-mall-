@@ -1,24 +1,26 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Shops - REALITY MALL</title>
+<title>Reality Mall - Warri</title>
 <style>
-*{box-sizing:border-box;font-family:Arial} body{margin:0;background:#f5f6f8;padding-bottom:75px}
-.top{padding:10px 14px;background:#fff;position:sticky;top:0;z-index:10;border-bottom:1px solid #eee}
-.icons{display:flex;gap:14px;font-size:22px}
-.icons span{cursor:pointer;padding:6px;background:#f0f2f5;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center}
-.icons span:active{background:#0d63f2;color:#fff}
-.searchBox{margin-top:10px;position:relative}
-.searchBox input{width:100%;padding:12px 12px 12px 40px;border-radius:24px;border:1px solid #ddd;background:#f0f2f5;font-size:14px}
-.searchBox:before{content:'🔍';position:absolute;left:12px;top:12px}
-.tabs{display:flex;gap:8px;overflow-x:auto;padding:10px 14px}.tab{padding:8px 18px;border-radius:20px;border:none;background:#e4e6eb;font-weight:600;white-space:nowrap}.tab.active{background:#0d63f2;color:#fff}
-.shops{padding:0 10px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+*{box-sizing:border-box;font-family:Arial} body{margin:0;background:#f0f2f5;padding-bottom:80px}
+.top{background:#fff;padding:10px 14px;position:sticky;top:0;z-index:20;border-bottom:1px solid #ddd}
+.icons{display:flex;gap:10px}
+.icons span{width:36px;height:36px;background:#f0f2f5;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px}
+.search{width:100%;padding:12px 12px 12px 40px;border-radius:24px;border:1px solid #ddd;background:#f0f2f5;margin-top:8px}
+.searchWrap{position:relative}.searchWrap:before{content:'🔍';position:absolute;left:12px;top:20px}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding:10px 14px;background:#fff;position:sticky;top:56px;z-index:10}
+.tab{padding:8px 16px;border-radius:20px;border:none;background:#e4e6eb;font-weight:600;white-space:nowrap;cursor:pointer}.tab.active{background:#0d63f2;color:#fff}
+.shops{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px}
 .card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);position:relative}
-.card img.prod{width:100%;height:130px;object-fit:cover;background:#eee}
+.card img.prod{width:100%;height:130px;object-fit:cover}
 .badge{position:absolute;top:8px;right:8px;background:#0d63f2;color:#fff;font-size:10px;padding:4px 8px;border-radius:12px;font-weight:800}
-.btn{width:90%;margin:8px 5%;padding:9px;background:#0d63f2;color:#fff;border:none;border-radius:20px;font-weight:700}
-.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:8px 0;border-top:1px solid #eee;z-index:20}
-.nav div{text-align:center;font-size:11px;cursor:pointer;padding:4px 12px;border-radius:12px}.nav div.active{color:#0d63f2;background:#eef3ff}
-.add{width:52px;height:52px;background:#000;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin-top:-20px;border:3px solid #fff;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.feed{background:#fff;margin:10px;border-radius:12px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.reelBadge{background:#000;color:#fff;padding:4px 8px;border-radius:12px;font-size:11px;display:inline-block;margin-top:6px}
+.btn{width:90%;margin:8px 5%;padding:9px;background:#0d63f2;color:#fff;border:none;border-radius:20px;font-weight:700;cursor:pointer}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:8px 0;border-top:1px solid #eee;z-index:30}
+.nav div{text-align:center;font-size:11px;cursor:pointer;padding:4px 12px}.nav div.active{color:#0d63f2}
+.add{width:52px;height:52px;background:#000;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin-top:-20px;border:3px solid #fff;cursor:pointer}
+.notify{position:fixed;top:60px;right:10px;background:#fff;width:300px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.2);z-index:50;padding:14px;display:none}
 </style>
 </head><body>
 
@@ -26,75 +28,123 @@
 <div style="display:flex;justify-content:space-between;align-items:center">
 <h2 style="color:#0d3c9c;margin:0">Shops</h2>
 <div class="icons">
-<span onclick="doSearch()" title="Search">🔍</span>
-<span onclick="openInbox()" title="Inbox Chat">💬</span>
-<span onclick="openNotify()" title="Notifications">🔔</span>
+<span onclick="focusSearch()">🔍</span>
+<span onclick="location.href='chat.html'">💬</span>
+<span onclick="toggleNotify()">🔔</span>
 </div>
 </div>
-<div class="searchBox"><input id="q" placeholder="Search shops, products, categories..." oninput="render()" onclick="doSearch()"></div>
+<div class="searchWrap"><input id="q" class="search" placeholder="Search shops, products, posts..." oninput="renderAll()"></div>
 </div>
 
 <div class="tabs">
-<button class="tab active" onclick="filterCat('')">All</button>
-<button class="tab" onclick="filterCat('fashion')">Fashion</button>
-<button class="tab" onclick="filterCat('tech')">Electronics</button>
-<button class="tab" onclick="filterCat('warri')">Warri</button>
+<button class="tab active" onclick="switchTab('all',this)">All</button>
+<button class="tab" onclick="switchTab('feed',this)">Feed</button>
+<button class="tab" onclick="switchTab('reels',this)">🎬 Reels</button>
+<button class="tab" onclick="switchTab('fashion',this)">Fashion</button>
+<button class="tab" onclick="switchTab('tech',this)">Electronics</button>
+<button class="tab" onclick="switchTab('warri',this)">Warri</button>
 </div>
 
-<div style="padding:0 14px;display:flex;justify-content:space-between;align-items:center"><h3 style="margin:6px 0">Shops</h3><small id="count">4 shops found • NGN / GHS / USD</small></div>
+<div style="padding:0 14px;display:flex;justify-content:space-between"><h3 id="sectionTitle" style="margin:6px 0">Shops & Feed</h3><small id="count"></small></div>
 
-<div id="shops" class="shops"></div>
+<!-- Shops Grid -->
+<div id="shopsGrid" class="shops"></div>
 
-<!-- Notifications Popup -->
-<div id="notifyBox" style="display:none;position:fixed;top:60px;right:10px;background:#fff;width:300px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.2);z-index:50;padding:14px">
-<div style="display:flex;justify-content:space-between"><b>Notifications</b><span onclick="document.getElementById('notifyBox').style.display='none'" style="cursor:pointer">✕</span></div>
-<hr>
-<div style="padding:8px 0">🔵 <b>Odera Fashion</b> posted new shoe - ₦15,000</div>
-<div style="padding:8px 0">🟢 <b>OC GLOBAL TECH</b> - Your verification ₦10,000 successful!</div>
-<div style="padding:8px 0">🔔 <b>Warri Gadgets</b> - 12 new views boosted</div>
-<button onclick="location.href='wallet.html'" style="width:100%;margin-top:8px;padding:10px;background:#0d63f2;color:#fff;border:none;border-radius:10px">View Wallet</button>
+<!-- Feed List -->
+<div id="feedList"></div>
+
+<!-- Notifications -->
+<div id="notifyBox" class="notify">
+<div style="display:flex;justify-content:space-between"><b>Notifications</b><span onclick="toggleNotify()" style="cursor:pointer">✕</span></div><hr>
+<div style="padding:8px 0">🔵 Odera Fashion posted new shoe - ₦15,000</div>
+<div style="padding:8px 0">🟢 OC GLOBAL TECH - Verification ₦10,000 success!</div>
+<div style="padding:8px 0">🔔 Warri Gadgets - 12 new views boosted</div>
+<div style="padding:8px 0">💰 New Deposit: ₦5,000 received</div>
+<button onclick="location.href='wallet.html'" style="width:100%;margin-top:8px;padding:10px;background:#0d63f2;color:#fff;border:none;border-radius:10px">View Wallet - Deposit/Withdraw</button>
 </div>
 
 <div class="nav">
 <div class="active" onclick="location.href='index.html'">🏠<br>Home</div>
 <div onclick="location.href='shop.html'">🛍️<br>Shop</div>
 <div class="add" onclick="location.href='post.html'">+</div>
-<div onclick="openInbox()">✉️<br>Inbox</div>
+<div onclick="location.href='chat.html'">✉️<br>Inbox</div>
 <div onclick="location.href='wallet.html'">👤<br>Wallet</div>
 </div>
 
 <script>
-let data=[
- {name:'Odera Fashion',cat:'fashion',prod:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400',priceN:'₦15,000',priceG:'GH₵120',priceU:'$20',rate:'4.8 (128 reviews)',badge:'Warri'},
- {name:'OC GLOBAL TECH',cat:'tech',prod:'https://images.unsplash.com/photo-1525598912003-663126343e1f?w=400',priceN:'₦12,500',priceG:'GH₵98',priceU:'$16',rate:'4.8 (96 reviews)',badge:'Verified'},
- {name:'Warri Gadgets',cat:'warri',prod:'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400',priceN:'₦9,800',priceG:'GH₵75',priceU:'$13',rate:'4.9 (310 reviews)',badge:'New'},
- {name:'Reality Mall Official',cat:'fashion',prod:'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400',priceN:'₦27,000',priceG:'GH₵210',priceU:'$35',rate:'4.9 (2k reviews)',badge:'Official'},
+let shopsData=[
+ {name:'Odera Fashion',cat:'fashion',img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400',priceN:'₦15,000',priceG:'GH₵120',priceU:'$20',rate:'4.9 (2k)',badge:'Warri'},
+ {name:'OC GLOBAL TECH',cat:'tech',img:'https://images.unsplash.com/photo-1525598912003-663126343e1f?w=400',priceN:'₦12,500',priceG:'GH₵98',priceU:'$16',rate:'4.8 (96)',badge:'Verified'},
+ {name:'Warri Gadgets',cat:'warri',img:'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400',priceN:'₦9,800',priceG:'GH₵75',priceU:'$13',rate:'4.9 (310)',badge:'New'},
+ {name:'Reality Mall Official',cat:'fashion',img:'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400',priceN:'₦27,000',priceG:'GH₵210',priceU:'$35',rate:'4.9 (2k)',badge:'Official'},
 ];
-function render(){
+let currentTab='all';
+function getPosts(){return JSON.parse(localStorage.getItem('reality_posts')||'[]')}
+function focusSearch(){document.getElementById('q').focus(); document.getElementById('q').style.border='2px solid #0d63f2';}
+function toggleNotify(){let b=document.getElementById('notifyBox'); b.style.display=b.style.display=='none'?'block':'none';}
+function switchTab(tab,el){
+ currentTab=tab; document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); el.classList.add('active');
+ renderAll();
+}
+function renderAll(){
  let q=document.getElementById('q').value.toLowerCase();
- let list=data.filter(d=>d.name.toLowerCase().includes(q) || d.cat.includes(q));
- document.getElementById('count').innerText=list.length+' shops found • NGN / GHS / USD';
- document.getElementById('shops').innerHTML=list.map(d=>`
-  <div class="card" onclick="location.href='shop.html?name=${encodeURIComponent(d.name)}'">
-  <span class="badge">${d.badge}</span>
-  <img class="prod" src="${d.prod}">
+ let shops=shopsData.filter(s=>s.name.toLowerCase().includes(q)||s.cat.includes(q)||currentTab=='all'||s.cat==currentTab||q);
+ let posts=getPosts();
+
+ // Count
+ document.getElementById('count').innerText=shops.length+' shops • '+posts.length+' posts';
+
+ // Shops
+ if(currentTab=='feed'||currentTab=='reels'){
+  document.getElementById('shopsGrid').style.display='none';
+ } else {
+  document.getElementById('shopsGrid').style.display='grid';
+  document.getElementById('shopsGrid').innerHTML=shops.map(s=>`
+  <div class="card" onclick="location.href='shop.html?name=${encodeURIComponent(s.name)}'">
+  <span class="badge">${s.badge}</span>
+  <img class="prod" src="${s.img}">
   <div style="padding:8px">
-  <div style="display:flex;gap:6px;align-items:center"><img src="https://i.pravatar.cc/24?img=${Math.floor(Math.random()*20)+1}" style="border-radius:50%"><b style="font-size:14px">${d.name}</b><span style="color:#0d63f2">✔️</span></div>
-  <div style="color:#ffb400;font-size:12px">⭐⭐⭐⭐⭐ ${d.rate}</div>
-  <div style="font-size:12px;margin-top:4px">🇳🇬 ${d.priceN} NGN</div>
-  <div style="font-size:12px">🇬🇭 ${d.priceG} GHS Cedi</div>
-  <div style="font-size:12px">🇺🇸 ${d.priceU} USD</div>
+  <div style="display:flex;gap:4px;align-items:center"><img src="https://i.pravatar.cc/24?img=${Math.floor(Math.random()*20)+1}" style="border-radius:50%"><b style="font-size:13px">${s.name}</b><span style="color:#0d63f2">✔️</span></div>
+  <div style="font-size:12px;color:#ffb400">⭐ ${s.rate}</div>
+  <div style="font-size:11px">🇳🇬 ${s.priceN} • 🇬🇭 ${s.priceG}</div>
   </div>
-  <button class="btn" onclick="event.stopPropagation(); location.href='shop.html?name=${encodeURIComponent(d.name)}'">Visit Shop</button>
+  <button class="btn" onclick="event.stopPropagation(); location.href='shop.html?name=${encodeURIComponent(s.name)}'">Visit Shop</button>
   </div>`).join('');
+ }
+
+ // Feed / Reels
+ let feedDiv=document.getElementById('feedList');
+ if(currentTab=='all' || currentTab=='feed' || currentTab=='reels'){
+  let filteredPosts=posts;
+  if(currentTab=='reels') filteredPosts=posts.filter(p=>p.reel);
+  if(q) filteredPosts=filteredPosts.filter(p=>p.text.toLowerCase().includes(q)||p.shop.toLowerCase().includes(q));
+
+  // If no posts, show sample
+  if(filteredPosts.length==0 && getPosts().length==0){
+   filteredPosts=[
+    {shop:'Odera Fashion',avatar:'https://i.pravatar.cc/40?img=5',text:'New Nike Shoes ₦15,000 in Warri! Tap + to post your own gallery photo/video. Choose Reel for 10x views!',media:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400',type:'image',time:'2h ago',likes:24,verified:true,reel:false},
+    {shop:'Warri Gadgets',avatar:'https://i.pravatar.cc/40?img=12',text:'This is Reel video demo - Choose Reel option when posting video! 🎬',media:'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400',type:'video',time:'5h ago',likes:56,verified:true,reel:true},
+   ];
+  }
+
+  feedDiv.innerHTML=filteredPosts.map(p=>`
+  <div class="feed">
+  <div style="display:flex;gap:8px"><img src="${p.avatar||'https://i.pravatar.cc/40?img=1'}" style="width:36px;height:36px;border-radius:50%"><div><b>${p.shop} ${p.verified?'✔️':''}</b><br><small style="color:#888">${p.time} • ${p.reel?'🎬 Reel':''} Warri</small></div><div style="margin-left:auto">•••</div></div>
+  <p style="margin:10px 0;font-size:14px">${p.text||''}</p>
+  ${p.media? (p.type=='image'? `<img src="${p.media}" style="width:100%;border-radius:12px;max-height:400px;object-fit:cover">` : `<video src="${p.media}" style="width:100%;border-radius:12px;max-height:400px" controls></video>${p.reel?'<div class=reelBadge>🎬 Reel • 10x Boost • Warri</div>':''}`) : ''}
+  <div style="display:flex;justify-content:space-between;margin-top:10px;border-top:1px solid #eee;padding-top:8px;font-size:13px;color:#666">
+  <span>👍 Like (${p.likes||0})</span><span>💬 Comment</span><span onclick="location.href='chat.html'">💬 Chat</span><span>↗️ Share</span>
+  </div>
+  </div>`).join('');
+  feedDiv.style.display='block';
+  document.getElementById('sectionTitle').innerText=currentTab=='reels'?'Reels - Warri 🎬':currentTab=='feed'?'Feed - Latest Posts':'Shops & Feed';
+ } else {
+  feedDiv.style.display='none';
+  document.getElementById('sectionTitle').innerText='Shops - '+currentTab;
+ }
 }
-function filterCat(c){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); event.target.classList.add('active'); document.getElementById('q').value=c; render();}
-function doSearch(){document.getElementById('q').focus(); document.getElementById('q').style.border='2px solid #0d63f2';}
-function openInbox(){location.href='chat.html';}
-function openNotify(){
- let b=document.getElementById('notifyBox');
- b.style.display=b.style.display=='none'?'block':'none';
-}
-render();
+// Handle hash #feed
+if(location.hash=='#feed'){ setTimeout(()=>{document.querySelectorAll('.tab')[1].click()},200); }
+renderAll();
 </script>
 </body></html>
