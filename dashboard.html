@@ -1,46 +1,74 @@
 <!DOCTYPE html>
 <html>
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Post - REALITY MALL</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>body{font-family:Arial;padding:15px;background:#f5f5f5} input,textarea,select{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:1px solid #ddd;box-sizing:border-box} button{width:100%;padding:14px;background:#000;color:#fff;border:none;border-radius:8px;font-weight:bold;margin-top:10px} .card{background:#fff;padding:20px;border-radius:12px}</style>
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Post to REALITY MALL</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;font-family:Arial} body{margin:0;background:#f5f6fa;padding:10px}
+a{color:#4b23a3;text-decoration:none;font-weight:bold}
+.box{background:#fff;max-width:500px;margin:10px auto;padding:20px;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.06)}
+input,select,textarea{width:100%;padding:14px;border-radius:12px;border:2px solid #e8eefc;background:#eef4ff;margin:8px 0;font-size:16px}
+button{width:100%;padding:16px;border-radius:12px;border:none;background:#000;color:#fff;font-weight:900;font-size:16px;margin-top:10px}
+#preview{width:100%;border-radius:12px;margin-top:8px;display:none}
+.err{color:red;font-weight:bold;margin:8px 0}.ok{color:green;font-weight:bold}
+#lang{position:fixed;bottom:20px;right:20px;background:#000;color:#fff;padding:8px 12px;border-radius:20px}
+</style>
 </head>
 <body>
-<a href="index.html">← Back to Mall</a> <a href="profile.html" style="float:right">My Profile</a>
-<h2>Post to REALITY MALL</h2>
-<div class="card">
-<input id="shop_name" placeholder="Your Shop / Your Name (e.g. Emeka Stores)" required>
-<input id="whatsapp" placeholder="WhatsApp number e.g. 234907..." required>
-<select id="feed_type"><option value="shops">🛍️ Shop Product (with price)</option><option value="posts">📝 General Post</option><option value="video">🎥 Video Post</option></select>
-<input id="price" type="number" placeholder="Price in Naira (for Shop products)">
-<textarea id="content" placeholder="What are you selling? Describe..." rows="4" required></textarea>
-<input id="image" type="file" accept="image/*,video/*">
-<p id="status"></p>
-<button onclick="postNow()" id="postBtn">Post Now</button>
-<p style="font-size:13px;color:#666">Your profile will be created automatically. People can click your name to see all your products.</p>
+<div style="max-width:500px;margin:0 auto;display:flex;justify-content:space-between;padding:10px">
+<a href="index.html">← Back to Mall</a><a href="profile.html?shop=Odera chidalu Vitalis">My Profile</a>
 </div>
+
+<div class="box">
+<h1>Post to REALITY MALL</h1>
+<input id="name" value="Odera chidalu Vitalis" placeholder="Your Name">
+<input id="phone" value="+2349078617514" placeholder="Phone e.g. +2349078617514">
+<select id="type"><option>🛍️ Shop Product (with price)</option><option>💼 Service</option><option>📢 Promo</option></select>
+<input id="price" placeholder="Price in Naira (for Shop products)" type="number">
+<textarea id="content" rows="4" placeholder="What are you selling?">Looking happy</textarea>
+<input id="file" type="file" accept="image/*" onchange="show(event)">
+<img id="preview">
+<div id="msg"></div>
+<button id="btn" onclick="post()">Post Now</button>
+<p style="font-size:13px;color:#888;margin-top:12px">Your profile will be created automatically. People can click your name to see all your products.</p>
+</div>
+
+<div id="lang">🌐 <select onchange="localStorage.setItem('lang',this.value);alert('Language: '+this.value)"><option>English</option><option>Pidgin</option><option>Igbo</option><option>Yoruba</option><option>Hausa</option></select></div>
+
 <script>
-const SUPABASE_URL='https://trawtkndvzsplcmmtjox.supabase.co'; const SUPABASE_ANON_KEY='sb_publishable_ACkUQyZDMHThA7SYE1ME2w_HMNjyIXg'; const client=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-async function postNow(){
- const shop_name=document.getElementById('shop_name').value.trim();
- const whatsapp=document.getElementById('whatsapp').value.trim();
- const feed_type=document.getElementById('feed_type').value;
- const price=document.getElementById('price').value;
- const content=document.getElementById('content').value.trim();
- const file=document.getElementById('image').files[0];
- if(!shop_name||!whatsapp||!content){alert('Fill shop name, WhatsApp and description');return}
- document.getElementById('postBtn').innerText='Posting...'; document.getElementById('status').innerText='Uploading...';
- let imageUrl='';
- try{
-  if(file){
-   const fileName=Date.now()+'_'+file.name; const {data,error}=await client.storage.from('product-images').upload(fileName,file);
-   if(error)throw error; const {data:pub}=client.storage.from('product-images').getPublicUrl(fileName); imageUrl=pub.publicUrl;
-  }
-  const {data,error}=await client.from('products').insert([{shop_name,whatsapp,feed_type,price:price?parseInt(price):0,content,name:content,image:imageUrl,status:'approved',views:0}]).select();
-  if(error)throw error;
-  localStorage.setItem('myShop',shop_name); localStorage.setItem('myWhatsApp',whatsapp);
-  document.getElementById('status').innerText='✅ Posted! Redirecting to your profile...';
-  setTimeout(()=>{window.location.href=`profile.html?shop=${encodeURIComponent(shop_name)}`},1000);
- }catch(e){document.getElementById('status').innerText='Error: '+e.message; document.getElementById('postBtn').innerText='Post Now';}
+const SURL='https://trawtkndvzsplcmmtjox.supabase.co';
+const SKEY='sb_publishable_ACkUQyZDMHThA7SYE1ME2w_HMNjyIXg';
+const client=supabase.createClient(SURL,SKEY);
+let base64Img='';
+
+function show(e){
+ let f=e.target.files[0]; if(!f) return;
+ document.getElementById('preview').style.display='block';
+ document.getElementById('preview').src=URL.createObjectURL(f);
+ // also convert to base64 as backup
+ let r=new FileReader(); r.onload=()=>{base64Img=r.result}; r.readAsDataURL(f);
 }
-</script>
-</body>
-</html>
+
+async function post(){
+ let name=document.getElementById('name').value.trim();
+ let phone=document.getElementById('phone').value.trim();
+ let content=document.getElementById('content').value.trim();
+ let price=document.getElementById('price').value||0;
+ let file=document.getElementById('file').files[0];
+ let msg=document.getElementById('msg');
+ let btn=document.getElementById('btn');
+
+ if(!name||!content){msg.innerHTML='<div class=err>Fill name and content</div>'; return}
+ btn.innerText='Posting...'; msg.innerHTML='';
+
+ let imageUrl = base64Img; // default use base64 so it NEVER fails
+
+ // Try to upload to bucket if exists
+ if(file){
+  try{
+   let fname=Date.now()+'-'+file.name.replace(/\s/g,'');
+   let {data,error}=await client.storage.from('products').upload(fname,file,{upsert:true});
+   if(error){
+    // If bucket not found, try create automatically message but keep base64
+    if(error.message.includes('Bucket not found')){
