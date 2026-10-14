@@ -1,102 +1,62 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>REALITY MALL - Warri No.1 Marketplace</title>
-<link rel="manifest" href="manifest.json">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 <style>
-body{font-family:Arial;margin:0;background:#fff}
-.header{background:#000;color:#fff;padding:12px 15px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:20}
-.search-bar{padding:10px;background:#fff;border-bottom:1px solid #eee;position:sticky;top:52px;z-index:15}
-.search-bar input{width:100%;padding:12px;border-radius:25px;border:1px solid #ddd;background:#f5f5f5;box-sizing:border-box}
-.feeds{display:flex;gap:8px;padding:10px;overflow:auto;white-space:nowrap;border-bottom:1px solid #eee;position:sticky;top:102px;background:#fff;z-index:10}
-.feed-btn{padding:8px 18px;border-radius:20px;border:1px solid #ddd;background:#fff;font-weight:bold;cursor:pointer;flex-shrink:0}
-.feed-btn.active{background:#000;color:#fff}
-.product-card{border-bottom:1px solid #eee;padding:15px}
-.product-card img,.product-card video{width:100%;border-radius:12px;max-height:400px;object-fit:cover}
-.price{color:green;font-weight:bold;font-size:18px}
-.btn{padding:10px 15px;background:#000;color:#fff;border:none;border-radius:8px;width:100%;margin-top:8px;font-weight:bold;cursor:pointer}
-.btn-small{padding:8px 12px;border-radius:20px;border:1px solid #ddd;background:#fff;font-size:13px;margin-right:5px;cursor:pointer}
-.ad-box{background:#fffbe6;border:2px dashed #ffb400;padding:15px;text-align:center;border-radius:12px;margin:10px}
-.ad-top{background:#000;color:#fff;padding:10px;text-align:center;position:sticky;top:146px;z-index:9}
-.shop-link{color:#000;text-decoration:none;font-weight:bold}
-.shop-link:hover{color:#ffb400}
-.actions{display:flex;gap:5px;margin-top:10px;flex-wrap:wrap}
+*{box-sizing:border-box;font-family:Arial, sans-serif}
+body{margin:0;background:#f5f6fa}
+.header{background:#000;color:#fff;padding:12px 15px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.logo{font-weight:900;font-size:20px;color:#ffb400;text-decoration:none}
+.search{flex:1;margin:0 10px;background:#222;border-radius:20px;display:flex;align-items:center;padding:6px 12px}
+.search input{flex:1;background:transparent;border:none;color:#fff;outline:none}
+.btn{padding:8px 14px;border-radius:20px;border:none;font-weight:bold;text-decoration:none;display:inline-block}
+.btn-yellow{background:#ffb400;color:#000}
+.btn-white{background:#fff;color:#000}
+.hero{background:linear-gradient(135deg,#000,#333);color:#fff;padding:20px 15px;text-align:center}
+.products{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px}
+.card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.card img{width:100%;height:160px;object-fit:cover}
+.card-body{padding:10px}
+.price{color:green;font-weight:900}
+.shop{color:#888;font-size:12px}
+#langFloat{position:fixed;bottom:20px;right:20px;z-index:9999;background:#000;color:#fff;padding:10px 14px;border-radius:25px;box-shadow:0 4px 15px rgba(0,0,0,.3);border:2px solid #ffb400}
+#langFloat select{background:transparent;color:#fff;border:none;font-weight:bold;outline:none}
+#google_translate_element{display:none}
+.topbar{display:flex;gap:8px;overflow-x:auto;padding:10px;background:#fff;border-bottom:1px solid #eee}
+.topbar button{white-space:nowrap;padding:8px 14px;border-radius:20px;border:1px solid #ddd;background:#fff}
 </style>
 </head>
 <body>
-<div class="header"><h2 style="margin:0">REALITY.</h2><div style="display:flex;gap:8px"><a href="invite.html" style="background:#25D366;color:#fff;padding:8px 12px;border-radius:20px;text-decoration:none;font-weight:bold">Invite</a><a href="profile.html" style="background:#333;color:#fff;padding:8px 12px;border-radius:20px;text-decoration:none">Profile</a><a href="dashboard.html" style="background:#fff;color:#000;padding:8px 15px;border-radius:20px;text-decoration:none;font-weight:bold">+ Post</a></div></div>
 
-<div class="search-bar"><input id="searchInput" placeholder="🔍 Search products, shops, Warri..." oninput="searchPosts()"></div>
-
-<div class="feeds">
-<button class="feed-btn active" onclick="loadFeed('all',this)">Home</button>
-<button class="feed-btn" onclick="loadFeed('shops',this)">🛍️ Shops</button>
-<button class="feed-btn" onclick="loadFeed('posts',this)">📝 Posts</button>
-<button class="feed-btn" onclick="loadFeed('video',this)">🎥 Video</button>
-<button class="feed-btn" onclick="loadFeed('boosted',this)">🔥 Boosted</button>
+<!-- HEADER -->
+<div class="header">
+<a href="index.html" class="logo">REALITY MALL</a>
+<div class="search"><input id="q" placeholder="Search products in Warri..." oninput="filter()"><span>🔍</span></div>
+<div style="display:flex;gap:6px">
+<a href="signup.html" class="btn btn-yellow">Sign Up</a>
+<a href="dashboard.html" class="btn btn-white">+ Post</a>
+</div>
 </div>
 
-<div class="ad-top">🔥 AD: Advertise Here ₦5k/week → <a href="https://wa.me/2349078617514" style="color:#ffb400;font-weight:bold">Chat Now</a></div>
+<!-- HERO -->
+<div class="hero">
+<h2 id="hero1" style="margin:0">Warri No.1 Online Mall 🛒</h2>
+<p id="hero2" style="margin:6px 0;color:#ccc">Buy & Sell in Warri, Ughelli, Sapele - Same Day Delivery</p>
+<div style="margin-top:12px">
+<a href="signup.html" class="btn btn-yellow">Create Free Shop</a>
+<a href="profile.html?shop=Odera%20chidalu%20vitalis" class="btn btn-white" style="margin-left:6px">View My Profile</a>
+</div>
+</div>
 
-<div id="products" style="padding:10px"><p>Loading...</p></div>
-
-<script>
-const SUPABASE_URL='https://trawtkndvzsplcmmtjox.supabase.co';
-const SUPABASE_ANON_KEY='sb_publishable_ACkUQyZDMHThA7SYE1ME2w_HMNjyIXg';
-const client=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-let allData=[];
-
-async function loadFeed(type,btn){
- if(btn){document.querySelectorAll('.feed-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}
- let q=client.from('products').select('*').order('created_at',{ascending:false}).eq('status','approved');
- if(type==='shops')q=q.eq('feed_type','shops');
- if(type==='posts')q=q.eq('feed_type','posts');
- if(type==='video')q=q.eq('feed_type','video');
- const {data}=await q;
- allData=data||[];
- if(type==='boosted'){allData=allData.filter(p=>localStorage.getItem('boost_'+p.id))}
- renderProducts(allData);
-}
-
-function renderProducts(data){
- if(!data||!data.length){document.getElementById('products').innerHTML='<div class="ad-box"><small>SPONSORED</small><h3>Advertise Your Business!</h3><p>Reach Warri customers</p><a href="https://wa.me/2349078617514"><button class="btn" style="background:#ffb400;color:#000">Buy Ad Space</button></a></div><p style="text-align:center;padding:20px">No posts in this category.<br><br><a href="dashboard.html" style="background:#000;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none">+ Post Now</a></p>';return}
- let html=''; data.forEach((p,i)=>{
-  if(i==1 || (i>0 && i%10==0)){
-   html+=`<div class="ad-box"><small>SPONSORED AD - Every 10 posts</small><h3>🔥 Your Business Here - ₦5k/week</h3><p>10,000+ Warri views</p><a href="https://wa.me/2349078617514?text=I want ad on REALITY MALL"><button class="btn" style="background:#ffb400;color:#000">Get Ad Space Now</button></a></div>`;
-  }
-  const isBoosted=localStorage.getItem('boost_'+p.id);
-  const boostData=isBoosted?JSON.parse(isBoosted):null;
-  const boostBadge=isBoosted?`<span style="background:#ffb400;color:#000;padding:4px 10px;border-radius:15px;font-size:11px;font-weight:bold">🔥 BOOSTED - ${boostData.price==1000?'400':boostData.price==3000?'1500':'UNLIMITED'} Views</span> <span style="background:#000;color:#fff;padding:4px 8px;border-radius:10px;font-size:11px">⭐ TOP</span>`:'';
-  const isVideo=p.image&&p.image.includes('.mp4')||p.feed_type==='video';
-  const media=isVideo?`<video src="${p.image}" controls></video>`:`<img src="${p.image||''}" loading="lazy">`;
-  const price=p.feed_type==='shops'?`<p class="price">₦${(p.price||0).toLocaleString()}</p>`:'';
-  const likes=localStorage.getItem('like_'+p.id)?'❤️':'🤍';
-  html+=`<div class="product-card" style="${isBoosted?'border:2px solid #ffb400;background:#fffbe6;border-radius:12px;margin-bottom:10px':''}">${boostBadge}${media}
-  <h3 style="margin:10px 0 5px"><a class="shop-link" href="profile.html?shop=${encodeURIComponent(p.shop_name||'')}" title="View Shop Profile">${p.shop_name||'Seller'} ✅</a></h3>
-  <p style="margin:5px 0">${p.content||p.name||''}</p>${price}<p style="color:#888;font-size:13px">${p.views||0} views • ${p.feed_type||'post'}</p>
-  <div class="actions">
-  <button class="btn-small" onclick="likePost('${p.id}')">${likes} Like</button>
-  <button class="btn-small" onclick="sharePost('${p.id}','${encodeURIComponent(p.content||p.name||'')}')">🔗 Share</button>
-  <button class="btn-small" onclick="window.open('profile.html?shop=${encodeURIComponent(p.shop_name||'') }')">👤 Profile</button>
-  </div>
-  <a href="https://wa.me/${p.whatsapp}?text=Hi, I saw your ${encodeURIComponent(p.content||'product')} on REALITY MALL" target="_blank"><button class="btn" style="background:#25D366">💬 Chat on WhatsApp</button></a>
-  <a href="boost.html?id=${p.id}"><button class="btn" style="background:#fff;color:#000;border:2px solid #000">🚀 Boost - ₦1k/400, ₦3k/1500, ₦5k Unlimited 7 days</button></a>
-  </div>`;
- });
- document.getElementById('products').innerHTML=html;
-}
-
-function searchPosts(){
- let term=document.getElementById('searchInput').value.toLowerCase();
- if(!term){renderProducts(allData);return}
- let filtered=allData.filter(p=> (p.content||'').toLowerCase().includes(term) || (p.shop_name||'').toLowerCase().includes(term) || (p.name||'').toLowerCase().includes(term));
- renderProducts(filtered);
-}
-function likePost(id){ let key='like_'+id; if(localStorage.getItem(key)){localStorage.removeItem(key)}else{localStorage.setItem(key,'1')} renderProducts(allData); }
-function sharePost(id,text){ let url=`https://realitymall.vercel.app/?post=${id}`; let shareText=`Check this on REALITY MALL: ${decodeURIComponent(text)} ${url}`; if(navigator.share){navigator.share({title:'REALITY MALL',text:shareText,url})}else{window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`)} }
-loadFeed('all');
-</script>
-</body>
-</html>
+<!-- CATEGORIES -->
+<div class="topbar">
+<button onclick="cat='all';load()">All</button>
+<button onclick="cat='phones';load()">Phones</button>
+<button onclick="cat='fashion';load()">Fashion</button>
+<button onclick="cat='electronics';load()">Electronics</button>
+<button onclick="cat='home';load()">Home</button>
+<button onclick="cat='services';load()">Services -
