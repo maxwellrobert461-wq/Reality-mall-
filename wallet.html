@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wallet - REALITY MALL</title>
+<script src="https://js.paystack.co/v1/inline.js"></script>
+<style>
+*{box-sizing:border-box;font-family:Arial} body{margin:0;background:#f5f6f8;padding-bottom:80px}
+.top{background:#0f1115;color:#fff;padding:12px 14px;display:flex;justify-content:space-between;align-items:center}
+.balance{background:linear-gradient(135deg,#1a2332,#2a3a4a);color:#fff;margin:14px;border-radius:16px;padding:18px;position:relative}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 14px}
+.btn{padding:14px;border:none;border-radius:12px;font-weight:800;display:flex;align-items:center;gap:8px;color:#fff}
+.red{background:#ff2d55} .blue{background:#0d63f2}
+.card{background:#fff;margin:14px;border-radius:12px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.boost{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #eee}
+.toggle{width:44px;height:26px;background:#0d63f2;border-radius:20px;position:relative;margin-left:auto}.toggle:after{content:'';width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:3px;right:3px}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #eee}
+.verified{color:#0d63f2;font-weight:800}
+</style>
+</head><body>
+<div class="top"><div><a href="index.html" style="color:#fff;text-decoration:none">←</a> <b>Wallet</b></div><div>🔔 ☰</div></div>
+
+<div class="balance">
+<div style="display:flex;justify-content:space-between;font-size:13px;color:#9fb0c8"><div>📁 Balance</div><div>🪙 Coins 0</div></div>
+<h1 style="font-size:48px;margin:10px 0">₦<span id="bal">0</span></h1>
+<div style="font-size:12px;color:#9fb0c8">Available balance • Updated just now • <span id="vStatus">Not Verified</span></div>
+</div>
+
+<div class="btns">
+<button class="btn red" onclick="promote()">📢 Promote<br>Your Shop</button>
+<button class="btn blue" onclick="verify()">🛡️ <span id="verifyText">Verify Now<br>₦10,000</span></button>
+</div>
+
+<div style="padding:14px;display:flex;justify-content:space-between;align-items:center">
+<h3 style="margin:0">Dashboard</h3><span style="font-size:13px">📅 Last 7 days ▾</span>
+</div>
+
+<div class="card">
+<img src="https://quickchart.io/chart?c={type:'line',data:{labels:['Mon','Tue','Wed','Thu','Fri','Sat','Today'],datasets:[{data:[20,35,50,40,60,75,85],borderColor:'#0d63f2',fill:false}]}}" style="width:100%;height:100px;object-fit:contain">
+<div style="display:flex;justify-content:space-between;margin-top:8px;font-size:12px">
+<div>Earnings this week<br><b style="color:#0d63f2;font-size:16px">+₦<span id="earn">0</span></b></div>
+<div>Views boosted<br><b style="font-size:16px">1.2K</b></div>
+</div>
+</div>
+
+<div style="padding:0 14px;display:flex;justify-content:space-between"><h3>Active Boosts</h3><a href="#" style="color:#0d63f2;font-size:14px">→ See all (3)</a></div>
+
+<div class="card" style="padding:0 12px">
+<div class="boost"><div style="background:#ffb400;padding:8px;border-radius:10px">⚡</div><div><b>Product Boost</b><br><small>Running • 3 days left • +850 views • ₦2,500</small></div><div class="toggle" onclick="toggleBoost(this)"></div></div>
+<div class="boost"><div style="background:#ff6b9d;padding:8px;border-radius:10px">🎯</div><div><b>Shop Visibility</b><br><small>Active • 5 days left • +320 profile visits • ₦3,000</small></div><div class="toggle" onclick="toggleBoost(this)"></div></div>
+<div class="boost"><div style="background:#4cd964;padding:8px;border-radius:10px">📈</div><div><b>Video Promote</b><br><small>Active • 1 day left • +54 clicks • ₦1,500</small></div><div class="toggle" onclick="toggleBoost(this)"></div></div>
+</div>
+
+<div class="card" style="background:#fff7e6;border:1px solid #ffb400">
+<h3 style="margin:0 0 8px">🔥 Boost for More Views</h3>
+<p style="font-size:13px;margin:0 0 10px">Get 10x more views on Reality Mall! Verified shops get 3x boost.</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<button onclick="buyBoost(2500,'Product Boost +850 views')" style="padding:10px;border-radius:10px;border:1px solid #ffb400;background:#fff;font-weight:700">Boost Product<br>₦2,500 - 850 views</button>
+<button onclick="buyBoost(5000,'Shop Boost +2,000 views')" style="padding:10px;border-radius:10px;border:1px solid #ffb400;background:#ffb400;color:#000;font-weight:700">Boost Shop<br>₦5,000 - 2K views</button>
+<button onclick="buyBoost(10000,'Premium +5,000 views + Homepage')" style="padding:10px;border-radius:10px;border:1px solid #0d63f2;background:#0d63f2;color:#fff;font-weight:700">Premium<br>₦10,000 - 5K views</button>
+<button onclick="buyBoost(20000,'Viral +15K views + Warri push')" style="padding:10px;border-radius:10px;border:1px solid #0d63f2;background:#fff;font-weight:700">Viral<br>₦20,000 - 15K views</button>
+</div>
+</div>
+
+<div class="nav">
+<div onclick="location.href='index.html'">🏠<br>Home</div>
+<div>🛍️<br>Shop</div>
+<div style="background:#000;color:#fff;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px">+</div>
+<div>✉️<br>Inbox</div>
+<div style="color:#ff2d55">👤<br>Wallet</div>
+</div>
+
+<script>
+let PAYSTACK='pk_live_16a8e4130e54cdbd8eb5a693ae37a52d874e3ee0';
+function load(){
+ let w=JSON.parse(localStorage.getItem('wallet')||'{"balance":0,"verified":false}');
+ document.getElementById('bal').innerText=w.balance.toLocaleString();
+ document.getElementById('earn').innerText=w.balance;
+ if(w.verified){document.getElementById('vStatus').innerHTML='<span class=verified>✔️ Verified - Blue Tick</span>'; document.getElementById('verifyText').innerHTML='✔️ Verified<br>Active';}
+ return w;
+}
+function verify(){
+ let w=load();
+ if(w.verified){alert('You are already verified with blue tick!'); return}
+ if(confirm('Verify your Reality Mall shop with blue tick for ₦10,000?\n\nBenefits:\n✔️ Blue tick like Loyals\n✔️ 3x more views\n✔️ Appear on top in Warri search\n✔️ Customers trust you\n\nPay ₦10,000 now?')){
+  PaystackPop.setup({
+   key:PAYSTACK,email:localStorage.getItem('myEmail')||'oderachidalu@gmail.com',amount:10000*100,currency:'NGN',ref:'VERIFY_'+Date.now(),
+   callback:function(res){
+    let fee=Math.floor(10000*0.02); // Your 2% fee
+    alert('Verification SUCCESS! Ref: '+res.reference+'\n\nPaid: ₦10,000\nApp fee 2%: ₦'+fee+'\nYou are now VERIFIED with blue tick!\n\nYour shop will get boost for more views!');
+    let wallet=JSON.parse(localStorage.getItem('wallet')||'{"balance":0,"verified":false}');
+    wallet.verified=true; wallet.balance+=100; // bonus
+    localStorage.setItem('wallet',JSON.stringify(wallet));
+    load();
+   },
+   onClose:function(){}
+  }).openIframe();
+ }
+}
+function promote(){alert('Promote Your Shop - Choose boost package below! Verified shops get 50% discount on boosts.')}
+function buyBoost(price,name){
+ if(confirm(`Buy ${name} for ₦${price.toLocaleString()}?\n\nThis will boost your products for more views in Warri, Ughelli, Sapele.\n\nPay now?`)){
+  PaystackPop.setup({
+   key:PAYSTACK,email:'buyer@realitymall.com',amount:price*100,currency:'NGN',ref:'BOOST_'+Date.now(),
+   callback:function(res){
+    let fee=Math.floor(price*0.02);
+    alert(`Boost ACTIVE! Ref: ${res.reference}\n\n${name}\nPaid: ₦${price}\nApp fee 2%: ₦${fee}\n\nYour views will increase in 10 minutes! Check dashboard.`);
+    let w=JSON.parse(localStorage.getItem('wallet')||'{"balance":0}'); w.balance+=price; localStorage.setItem('wallet',JSON.stringify(w)); load();
+   },
+   onClose:function(){}
+  }).openIframe();
+ }
+}
+function toggleBoost(el){el.style.background=el.style.background=='rgb(228, 230, 235)'?'#0d63f2':'#e4e6eb';}
+load();
+</script>
+</body></html>
