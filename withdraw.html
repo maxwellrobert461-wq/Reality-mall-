@@ -1,0 +1,7 @@
+// Withdrawal with 2% fee example
+function withdraw(amount){
+  let fee = amount * 0.02;
+  let net = amount - fee;
+  // Save: User gets net, App gets fee
+  alert(`You withdraw ₦${amount}. Fee 2% = ₦${fee}. You receive ₦${net}`);
+}
