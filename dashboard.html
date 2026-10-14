@@ -19,7 +19,7 @@ button{width:100%;padding:16px;background:#000;color:#fff;border:none;border-rad
 <div class="box">
 <h2>Post to REALITY MALL</h2>
 <input id="name" value="Odera chidalu Vitalis">
-<input id="phone" value="+2349078617514">
+<input id="phone" placeholder="+2349078617514">
 <select id="type"><option>Shop Product (with price)</option></select>
 <input id="price" placeholder="Price in Naira">
 <textarea id="content" rows="4">Looking happy</textarea>
@@ -27,10 +27,20 @@ button{width:100%;padding:16px;background:#000;color:#fff;border:none;border-rad
 <img id="prev">
 <div id="msg" style="margin:10px 0;font-weight:bold"></div>
 <button id="btn" onclick="doPost()">Post Now</button>
-<p style="font-size:12px;color:#888">Profile auto-created. Click your name to see products.</p>
 </div>
 <script>
 const client=supabase.createClient('https://trawtkndvzsplcmmtjox.supabase.co','sb_publishable_ACkUQyZDMHThA7SYE1ME2w_HMNjyIXg');
+
+// Add this top of script
+let userPhone = localStorage.getItem('userPhone') || '+2349078617514';
+document.addEventListener('DOMContentLoaded', ()=>{
+  let phoneInput = document.getElementById('phone');
+  if(phoneInput) phoneInput.value = userPhone;
+  let nameInput = document.getElementById('name');
+  let savedName = localStorage.getItem('myShop');
+  if(nameInput && savedName) nameInput.value = savedName;
+});
+
 let imgData='';
 function previewFile(){
  let f=document.getElementById('file').files[0]; if(!f) return;
@@ -40,21 +50,20 @@ async function doPost(){
  let m=document.getElementById('msg'); let b=document.getElementById('btn');
  let name=document.getElementById('name').value, phone=document.getElementById('phone').value, content=document.getElementById('content').value, price=document.getElementById('price').value;
  if(!content){m.innerHTML='Write something'; return}
+ // Save phone for next time
+ localStorage.setItem('userPhone', phone);
+ localStorage.setItem('myShop', name);
  b.innerText='Posting... please wait';
- // If no image selected, use placeholder
  if(!imgData) imgData='https://via.placeholder.com/400x400?text='+encodeURIComponent(name);
  try{
   let {error}=await client.from('products').insert([{shop_name:name,phone:phone,content:content,price:parseInt(price)||0,image:imgData,location:'Warri',views:0}]);
   if(error) throw error;
-  m.style.color='green'; m.innerHTML='✅ SUCCESS! Posted "Looking happy"'; b.innerText='Posted! Go to Mall';
+  m.style.color='green'; m.innerHTML='✅ SUCCESS! Posted'; b.innerText='Posted! Go to Mall';
   setTimeout(()=>location.href='index.html',1200);
  }catch(e){
-  m.style.color='red'; m.innerHTML='❌ Error: '+e.message+'<br>Check: Did you run SQL?'; b.innerText='Post Now';
-  console.log(e);
+  m.style.color='red'; m.innerHTML='❌ Error: '+e.message; b.innerText='Post Now';
  }
 }
-// auto load previous image as preview
-previewFile();
 </script>
 </body>
 </html>
