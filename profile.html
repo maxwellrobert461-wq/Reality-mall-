@@ -1,74 +1,48 @@
-<!DOCTYPE html><html><head><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4813832175831420"
-     crossorigin="anonymous"></script><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>My Profile - Reality Mall</title>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4813832175831420" crossorigin="anonymous"></script>
 <style>
 *{box-sizing:border-box;font-family:Arial} body{margin:0;background:#f0f2f5;padding-bottom:90px}
-.top{background:#fff;padding:14px;display:flex;align-items:center;gap:12px;position:sticky;top:0;border-bottom:1px solid #eee}
-.avatar{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#0d63f2,#4a90e2);color:#fff;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;overflow:hidden}
-.card{background:#fff;margin:10px;border-radius:16px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.input{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin:6px 0;font-size:15px}
-.btn{width:100%;padding:14px;background:#0d63f2;color:#fff;border:none;border-radius:12px;font-weight:800;cursor:pointer;margin:5px 0}
-.badge{padding:4px 10px;border-radius:12px;font-size:12px;font-weight:800;display:inline-block}
-.verified{background:#e6f4ea;color:#137333}.not{background:#fce8e6;color:#a50e0e}
+.topProf{background:#fff;padding:16px;display:flex;gap:14px;align-items:center;border-bottom:1px solid #eee}
+.avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#0d63f2,#4a90e2);color:#fff;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:800;overflow:hidden}
+.card{background:#fff;margin:8px;border-radius:14px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.postGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px}
+.postItem{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.btn{width:100%;padding:12px;background:#0d63f2;color:#fff;border:none;border-radius:10px;font-weight:800;cursor:pointer;margin:4px 0}
+.btnBlack{background:#000}
 .nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:8px 0;border-top:1px solid #eee;z-index:99}
-.stat{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0f0}
 </style></head><body>
-<div class="top">
-<div class="avatar" id="av">O</div>
-<div><h3 id="pName" style="margin:0">Create Profile</h3><div id="pPhone" style="font-size:13px;color:#666">Tap Edit below</div><div id="vBadge" class="badge not" style="margin-top:4px">Not Verified</div></div>
-</div>
+<div class="topProf"><div class="avatar" id="av">O</div><div style="flex:1"><h2 id="pName" style="margin:0">Your Name</h2><div id="pShop" style="color:#666;font-size:14px">Your Shop • Warri</div><div style="display:flex;gap:10px;margin-top:6px;font-size:13px"><span><b id="postCount">0</b> posts</span><span><b>850</b> views</span><span id="vBadge" style="background:#fce8e6;color:#a50e0e;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:800">Not Verified</span></div></div></div>
 
 <div class="card">
-<h3 style="margin:0 0 8px 0">Create / Edit Your Profile & Shop</h3>
-<input id="name" class="input" placeholder="Full Name - e.g. Odera Chidalu">
-<input id="shop" class="input" placeholder="Shop Name - e.g. Warri Fashion Hub">
-<input id="phone" class="input" placeholder="Phone - 09078617514">
-<input id="email" class="input" placeholder="Email - oderachidalu@gmail.com">
-<input id="bio" class="input" placeholder="Bio - What do you sell? Fashion? Phones?">
-<label style="font-size:13px;color:#555">Profile Picture:</label>
-<input type="file" id="pic" accept="image/*" class="input" onchange="previewPic(this)">
-<button class="btn" onclick="saveProfile()">✅ Save Profile & Create My Shop</button>
+<h3 style="margin:0 0 6px;font-size:14px">🔒 Only YOU can post on your profile</h3>
+<div style="display:flex;gap:8px"><button class="btn" onclick="location.href='post.html'" style="flex:1">+ Add Product</button><button class="btn btnBlack" onclick="document.getElementById('editBox').style.display=document.getElementById('editBox').style.display=='none'?'block':'none'" style="flex:1">Edit Profile</button></div>
+<div id="editBox" style="display:none;margin-top:8px"><input id="name" placeholder="Full Name" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin:4px 0"><input id="shop" placeholder="Shop Name" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin:4px 0"><input id="phone" placeholder="Phone" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin:4px 0"><input type="file" accept="image/*" onchange="setPic(this)" style="width:100%"><button class="btn" onclick="saveProf()">Save Profile</button></div>
 </div>
 
-<div class="card">
-<h3 style="margin:0 0 8px 0">My Account</h3>
-<div class="stat"><span>Shop Views</span><b id="views">0</b></div>
-<div class="stat"><span>Wallet Balance</span><b id="bal">₦0</b></div>
-<div class="stat"><span>Referral Link</span><b style="font-size:11px" id="refLink">realitymall.vercel.app?ref=ODERA</b></div>
-<div class="stat"><span>Total Referrals</span><b id="refCount">0</b></div>
-<button class="btn" style="background:#25d366" onclick="shareWA()">Share Referral on WhatsApp - Earn ₦200!</button>
-<button class="btn" style="background:#000" onclick="copyLink()">Copy My Shop Link</button>
-</div>
-
-<div class="card">
-<div style="background:#f8f9fa;padding:10px;border-radius:10px;font-size:12px;word-break:break-all" id="myLink">realitymall.vercel.app/shop.html?seller=ODERA</div>
-<div style="margin-top:12px"><small style="color:#888">Advertisement</small>
-<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-4813832175831420" data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
-<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script></div>
-</div>
+<div id="postsArea" class="postGrid"></div>
+<div style="background:#fff;margin:8px;border-radius:12px;padding:10px;border:1px solid #eee"><small style="color:#999">Advertisement</small><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-4813832175831420" data-ad-slot="2222222222" data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({});</script></div>
 
 <div class="nav">
-<div onclick="location.href='index.html'">🏠<br>Home</div>
-<div onclick="location.href='shop.html'">🛍️<br>Shop</div>
-<div style="width:52px;height:52px;background:#000;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin-top:-20px;border:3px solid #fff" onclick="location.href='post.html'">+</div>
-<div onclick="location.href='chat.html'">✉️<br>Inbox</div>
-<div style="color:#0d63f2;font-weight:800" onclick="location.href='wallet.html'">💰<br>Wallet</div>
-<div style="color:#0d63f2;font-weight:800">👤<br>You</div>
+<div onclick="location.href='index.html'" style="text-align:center;font-size:12px">🏠<br>Home</div><div onclick="location.href='shop.html'" style="text-align:center;font-size:12px">🛍️<br>Shop</div><div onclick="location.href='post.html'" style="width:56px;height:56px;background:#000;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;margin-top:-22px;border:3px solid #fff">+</div><div onclick="location.href='chat.html'" style="text-align:center;font-size:12px">✉️<br>Inbox</div><div onclick="location.href='wallet.html'" style="text-align:center;font-size:12px">💰<br>Wallet</div><div style="text-align:center;font-size:12px;color:#0d63f2;font-weight:800">👤<br>You</div>
 </div>
-
 <script>
-function getProf(){return JSON.parse(localStorage.getItem('rm_profile')||'{}')}
+function getProf(){return JSON.parse(localStorage.getItem('rm_profile')||'{"name":"Odera","shop":"Warri Fashion Hub","phone":"09078617514","views":850}')}
+function getPosts(){return JSON.parse(localStorage.getItem('rm_posts')||'[]')}
 function load(){
- let p=getProf(); let w=JSON.parse(localStorage.getItem('rm_wallet')||'{"balance":0,"verified":false}');
- if(p.name){document.getElementById('name').value=p.name; document.getElementById('shop').value=p.shop||''; document.getElementById('phone').value=p.phone||''; document.getElementById('email').value=p.email||''; document.getElementById('bio').value=p.bio||''; document.getElementById('pName').innerText=p.name; document.getElementById('pPhone').innerText=p.phone||''; document.getElementById('av').innerText=(p.name[0]||'O').toUpperCase(); if(p.pic) document.getElementById('av').innerHTML='<img src="'+p.pic+'" style="width:70px;height:70px;border-radius:50%;object-fit:cover">';}
- document.getElementById('bal').innerText='₦'+(w.balance||0); document.getElementById('views').innerText=p.views||850;
- document.getElementById('vBadge').innerText=w.verified?'✔️ Verified':'Not Verified'; document.getElementById('vBadge').className='badge '+(w.verified?'verified':'not');
- let ref=(p.name||'ODERA').replace(/\s/g,'').toUpperCase().substring(0,8)||'ODERA'; document.getElementById('refLink').innerText='realitymall.vercel.app?ref='+ref; document.getElementById('myLink').innerText='realitymall.vercel.app/shop.html?seller='+ref;
+let p=getProf(); let w=JSON.parse(localStorage.getItem('rm_wallet')||'{"balance":0,"verified":false}');
+document.getElementById('pName').innerText=p.name||'Your Name'; document.getElementById('pShop').innerText=(p.shop||'My Shop')+' • Warri';
+document.getElementById('av').innerText=(p.name||'O')[0].toUpperCase(); if(p.pic) document.getElementById('av').innerHTML='<img src="'+p.pic+'" style="width:80px;height:80px;border-radius:50%;object-fit:cover">';
+document.getElementById('name').value=p.name||''; document.getElementById('shop').value=p.shop||''; document.getElementById('phone').value=p.phone||'';
+document.getElementById('vBadge').innerText=w.verified?'✔️ Verified':'Not Verified'; document.getElementById('vBadge').style.background=w.verified?'#e6f4ea':'#fce8e6'; document.getElementById('vBadge').style.color=w.verified?'#137333':'#a50e0e';
+let posts=getPosts(); let myPosts=posts.filter(x=>x.seller==p.name); if(posts.length==0) myPosts=[];
+document.getElementById('postCount').innerText=myPosts.length;
+let html=''; for(let i=0;i<myPosts.length;i++){let pr=myPosts[i]; html+='<div class="postItem"><img src="'+pr.img+'" style="width:100%;height:140px;object-fit:cover"><div style="padding:8px"><b style="font-size:13px">'+pr.title+'</b><div style="color:#0d63f2;font-weight:800">₦'+pr.price+'</div><div style="display:flex;gap:4px;margin-top:6px"><button style="flex:1;background:#0d63f2;color:#fff;border:none;border-radius:16px;padding:6px;font-size:11px" onclick="alert(\'Only you can edit\')">Edit</button><button style="flex:1;background:#f0f2f5;border:none;border-radius:16px;padding:6px;font-size:11px" onclick="deletePost('+i+')">Delete</button></div></div></div>';}
+if(myPosts.length==0) html='<div style="grid-column:span 2;text-align:center;padding:30px;color:#888">No posts yet<br><small>Only YOU can post on your profile. Tap + Add Product!</small></div>';
+document.getElementById('postsArea').innerHTML=html;
 }
-function previewPic(inp){let r=new FileReader(); r.onload=e=>{document.getElementById('av').innerHTML='<img src="'+e.target.result+'" style="width:70px;height:70px;border-radius:50%;object-fit:cover">'; let p=getProf(); p.pic=e.target.result; localStorage.setItem('rm_profile',JSON.stringify(p));}; r.readAsDataURL(inp.files[0]);}
-function saveProfile(){let p={name:document.getElementById('name').value, shop:document.getElementById('shop').value, phone:document.getElementById('phone').value, email:document.getElementById('email').value, bio:document.getElementById('bio').value, views:getProf().views||850, pic:getProf().pic||''}; if(!p.name) return alert('Enter name!'); localStorage.setItem('rm_profile',JSON.stringify(p)); localStorage.setItem('myEmail',p.email); alert('✅ Profile Saved! Shop Created: '+p.shop); load();}
-function shareWA(){let link=document.getElementById('refLink').innerText; let name=getProf().name||'Odera'; let msg='🔥 Join Reality Mall Warri! Built by '+name+'! First 50 get ₦500 FREE! Link: '+link; window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');}
-function copyLink(){navigator.clipboard.writeText(document.getElementById('myLink').innerText); alert('✅ Shop link copied!');}
+function saveProf(){let p=getProf(); p.name=document.getElementById('name').value; p.shop=document.getElementById('shop').value; p.phone=document.getElementById('phone').value; if(!p.name) return alert('Enter name'); localStorage.setItem('rm_profile',JSON.stringify(p)); localStorage.setItem('myEmail',p.shop+'@gmail.com'); alert('Saved!'); load(); document.getElementById('editBox').style.display='none';}
+function setPic(inp){let r=new FileReader(); r.onload=e=>{let p=getProf(); p.pic=e.target.result; localStorage.setItem('rm_profile',JSON.stringify(p)); load();}; r.readAsDataURL(inp.files[0]);}
+function deletePost(idx){if(confirm('Delete? Only you can delete your posts')){let posts=getPosts(); let p=getProf(); let my=posts.filter(x=>x.seller==p.name); let realIdx=posts.indexOf(my[idx]); posts.splice(realIdx,1); localStorage.setItem('rm_posts',JSON.stringify(posts)); load();}}
 load();
 </script></body></html>
