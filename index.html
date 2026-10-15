@@ -1,133 +1,69 @@
-<!DOCTYPE html>
-<html><head><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4813832175831420"
-     crossorigin="anonymous"></script><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Reality Mall - Warri</title>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reality Mall - Warri Marketplace</title>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4813832175831420" crossorigin="anonymous"></script>
 <style>
 *{box-sizing:border-box;font-family:Arial} body{margin:0;background:#f0f2f5;padding-bottom:90px}
-.top{background:#fff;padding:10px 14px;position:sticky;top:0;z-index:20;border-bottom:1px solid #ddd}
-.search{width:100%;padding:12px 12px 12px 40px;border-radius:24px;border:1px solid #ddd;background:#f0f2f5;margin-top:8px}
-.tabs{display:flex;gap:8px;overflow-x:auto;padding:10px 14px;background:#fff}
-.tab{padding:8px 16px;border-radius:20px;border:none;background:#e4e6eb;font-weight:600;white-space:nowrap;cursor:pointer}.tab.active{background:#0d63f2;color:#fff}
-.shops{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px}
-.card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);position:relative}
-.badge{position:absolute;top:8px;right:8px;background:#0d63f2;color:#fff;font-size:10px;padding:4px 8px;border-radius:12px;font-weight:800}
-.btn{width:44%;margin:4px 2%;padding:8px;background:#0d63f2;color:#fff;border:none;border-radius:20px;font-weight:700;cursor:pointer;font-size:12px}
-.btnGreen{background:#25D366}
-.feed{background:#fff;margin:10px;border-radius:12px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.launch{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px}
-.launchBox{background:#fff;border-radius:20px;padding:20px;max-width:340px;text-align:center;animation:pop .3s}
-@keyframes pop{from{transform:scale(.8)}to{transform:scale(1)}}
-.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:8px 0;border-top:1px solid #eee;z-index:30}
-.add{width:52px;height:52px;background:#000;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin-top:-20px;border:3px solid #fff;cursor:pointer}
-.refBar{background:linear-gradient(135deg,#0d63f2,#4a90e2);color:#fff;margin:10px;border-radius:12px;padding:12px;display:flex;justify-content:space-between;align-items:center}
-</style>
-</head><body>
-
-<!-- LAUNCH POPUP - FIRST 50 USERS -->
-<div id="launchPop" class="launch" style="display:none">
-<div class="launchBox">
-<h2 style="margin:0">🔥 Warri Launch!</h2>
-<p><b>First 50 sellers get:</b><br>✅ ₦500 FREE wallet bonus<br>✅ Free Boost (850 views)<br>✅ Blue tick priority</p>
-<div style="background:#f0f2f5;padding:10px;border-radius:10px;font-size:13px">
-👥 <b id="userCount">12</b>/50 sellers joined<br>⏰ 38 spots left today!
-</div>
-<button onclick="closeLaunch()" style="width:100%;margin-top:12px;padding:12px;background:#0d63f2;color:#fff;border:none;border-radius:12px;font-weight:800">Claim My Spot - Join Now!</button>
-<button onclick="closeLaunch()" style="background:none;border:none;margin-top:8px;color:#888">Later</button>
-</div>
-</div>
-
+.top{ background:#fff; padding:10px 14px 12px; position:sticky; top:0; z-index:10; border-bottom:1px solid #eee}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding:10px;background:#fff;position:sticky;top:78px;z-index:9}
+.tabBtn{white-space:nowrap;padding:8px 16px;border-radius:20px;border:1px solid #ddd;background:#f0f2f5;font-weight:700;font-size:14px}
+.activeTab{background:#0d63f2!important;color:#fff!important;border-color:#0d63f2!important}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px}
+.card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:8px 0;border-top:1px solid #eee;z-index:99}
+</style></head><body>
 <div class="top">
 <div style="display:flex;justify-content:space-between;align-items:center">
-<h2 style="color:#0d3c9c;margin:0">Shops</h2>
-<div style="display:flex;gap:8px">
-<span onclick="location.href='chat.html'" style="width:36px;height:36px;background:#f0f2f5;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer">💬</span>
-<span onclick="location.href='wallet.html'" style="width:36px;height:36px;background:#f0f2f5;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer">🔔</span>
+<h1 style="margin:0;color:#0d3c9c;font-size:26px;font-weight:800">Shops</h1>
+<div style="display:flex;gap:10px;align-items:center">
+<div id="topProf" onclick="location.href='profile.html'" style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#0d63f2,#4a90e2);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;cursor:pointer;border:2px solid #fff;box-shadow:0 2px 4px rgba(0,0,0,.2)">O</div>
+<div onclick="location.href='chat.html'" style="width:38px;height:38px;border-radius:50%;background:#f0f2f5;display:flex;align-items:center;justify-content:center;cursor:pointer">💬</div>
+<div onclick="location.href='wallet.html'" style="width:38px;height:38px;border-radius:50%;background:#f0f2f5;display:flex;align-items:center;justify-content:center;cursor:pointer">🔔</div>
 </div>
 </div>
-<input id="q" class="search" placeholder="Search shops, posts..." oninput="renderAll()">
-</div>
-
-<!-- REFERRAL BAR -->
-<div class="refBar">
-<div><b>💰 Invite = ₦200</b><br><small>Your code: <b id="myRef">WARRI_1234</b> • <span id="refCount">0</span> invites</small></div>
-<button onclick="shareReferral()" style="background:#fff;color:#0d63f2;border:none;padding:8px 14px;border-radius:20px;font-weight:800">Share on WhatsApp</button>
+<div style="margin-top:10px"><input id="search" placeholder="Search shops, posts..." style="width:100%;padding:12px 16px;border-radius:24px;border:1px solid #e0e0e0;background:#f0f2f5;outline:none" oninput="filterShops()"></div>
 </div>
 
-<div class="tabs">
-<button class="tab active" onclick="switchTab('all',this)">All</button>
-<button class="tab" onclick="switchTab('feed',this)">Feed</button>
-<button class="tab" onclick="switchTab('reels',this)">🎬 Reels</button>
-<button class="tab" onclick="switchTab('fashion',this)">Fashion</button>
-<button class="tab" onclick="switchTab('tech',this)">Electronics</button>
-</div>
+<div class="tabs"><div class="tabBtn activeTab" onclick="setFilter('All',this)">All</div><div class="tabBtn" onclick="setFilter('Feed',this)">Feed</div><div class="tabBtn" onclick="setFilter('Reels',this)">🎬 Reels</div><div class="tabBtn" onclick="setFilter('Fashion',this)">Fashion</div><div class="tabBtn" onclick="setFilter('Electronics',this)">Electronics</div></div>
 
-<div style="padding:0 14px"><h3 id="secTitle" style="margin:8px 0">Shops & Feed</h3></div>
-<div id="shopsGrid" class="shops"></div>
-<div id="feedList"></div>
+<h3 style="margin:12px 14px 0">Shops & Feed</h3>
+<div id="shopGrid" class="grid"></div>
+
+<div style="background:#fff;margin:8px;border-radius:12px;padding:10px;border:1px solid #eee">
+<small style="color:#999">Advertisement</small>
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-4813832175831420" data-ad-slot="1111111111" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</div>
 
 <div class="nav">
-<div class="active">🏠<br>Home</div>
-<div onclick="location.href='shop.html'">🛍️<br>Shop</div>
-<div class="add" onclick="location.href='post.html'">+</div>
-<div onclick="location.href='chat.html'">✉️<br>Inbox</div>
-<div onclick="location.href='wallet.html'">👤<br>Wallet</div>
+<div style="text-align:center;font-size:12px;color:#0d63f2;font-weight:800">🏠<br>Home</div>
+<div onclick="location.href='shop.html'" style="text-align:center;font-size:12px">🛍️<br>Shop</div>
+<div onclick="location.href='post.html'" style="width:56px;height:56px;background:#000;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;margin-top:-22px;border:3px solid #fff">+</div>
+<div onclick="location.href='chat.html'" style="text-align:center;font-size:12px">✉️<br>Inbox</div>
+<div onclick="location.href='wallet.html'" style="text-align:center;font-size:12px">💰<br>Wallet</div>
+<div onclick="location.href='profile.html'" style="text-align:center;font-size:12px">👤<br>You</div>
 </div>
 
 <script>
-let shopsData=[
- {name:'Odera Fashion',cat:'fashion',img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400',price:'₦15,000'},
- {name:'OC GLOBAL TECH',cat:'tech',img:'https://images.unsplash.com/photo-1525598912003-663126343e1f?w=400',price:'₦12,500'},
- {name:'Warri Gadgets',cat:'tech',img:'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400',price:'₦9,800'},
- {name:'Reality Mall Official',cat:'fashion',img:'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400',price:'₦27,000'},
+function getPosts(){return JSON.parse(localStorage.getItem('rm_posts')||'[]')}
+function getProf(){return JSON.parse(localStorage.getItem('rm_profile')||'{}')}
+let defaultShops=[
+{title:"Odera Fashion", price:"₦15,000", cat:"Fashion", warri:true, verified:true, img:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400", seller:"Odera"},
+{title:"OC GLOBAL TECH", price:"₦12,500", cat:"Electronics", warri:true, verified:true, img:"https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400", seller:"OC"},
+{title:"Warri Gadgets", price:"₦9,800", cat:"Electronics", warri:true, verified:true, img:"https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?w=400", seller:"Warri Gadgets"},
+{title:"Reality Mall Official", price:"₦27,000", cat:"Fashion", warri:true, verified:true, img:"https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400", seller:"Reality Mall"}
 ];
-// REFERRAL SYSTEM
-function genRef(){let c=localStorage.getItem('myRefCode'); if(!c){c='WARRI_'+Math.floor(1000+Math.random()*9000); localStorage.setItem('myRefCode',c);} return c;}
-function getRefCount(){return parseInt(localStorage.getItem('refCount')||'0')}
-function checkUrlRef(){
- let p=new URLSearchParams(location.search); let ref=p.get('ref');
- if(ref && ref!==genRef()){
-  if(!localStorage.getItem('usedRef')){
-   localStorage.setItem('usedRef',ref);
-   let ownerCount=parseInt(localStorage.getItem('ref_'+ref)||'0'); localStorage.setItem('ref_'+ref,ownerCount+1);
-   alert('🎉 You joined via referral: '+ref+'\nYou will get ₦200 bonus when you verify!');
-  }
- }
+function render(filter="All"){
+let posts=getPosts(); let all=[...posts.map(p=>({title:p.title, price:"₦"+p.price, cat:p.cat||"Feed", warri:true, verified:false, img:p.img, seller:p.seller})),...defaultShops];
+if(filter!="All") all=all.filter(s=>s.cat==filter);
+let q=document.getElementById('search').value.toLowerCase(); if(q) all=all.filter(s=>s.title.toLowerCase().includes(q));
+document.getElementById('shopGrid').innerHTML=all.map(s=>`
+<div class="card"><div style="position:relative"><img src="${s.img}" style="width:100%;height:160px;object-fit:cover"><span style="position:absolute;top:8px;right:8px;background:#0d63f2;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700">Warri</span></div>
+<div style="padding:8px"><b style="font-size:14px">${s.title} ${s.verified?'✔️':''}</b><div style="font-size:13px;color:#555">${s.price} • ⭐ 4.9</div>
+<div style="display:flex;gap:6px;margin-top:6px"><button style="flex:1;background:#0d63f2;color:#fff;border:none;border-radius:18px;padding:8px;font-weight:700;font-size:12px" onclick="location.href='shop.html?seller=${encodeURIComponent(s.seller)}'">Visit</button><button style="flex:1;background:#25d366;color:#fff;border:none;border-radius:18px;padding:8px;font-weight:700;font-size:12px" onclick="window.open('https://wa.me/2349078617514?text=Hi ${s.seller} from Reality Mall','_blank')">WhatsApp</button></div></div></div>
+`).join('')||'<div style="grid-column:span 2;text-align:center;padding:20px;color:#888">No shops found</div>';
+let p=getProf(); if(p.name){let el=document.getElementById('topProf'); el.innerText=p.name[0].toUpperCase(); if(p.pic) el.innerHTML='<img src="'+p.pic+'" style="width:38px;height:38px;border-radius:50%;object-fit:cover">';}
 }
-function shareReferral(){
- let code=genRef(); let link=location.origin+location.pathname+'?ref='+code;
- let text=`🔥 Join Reality Mall Warri! Sell your products online, get buyers in Warri/Ughelli/Sapele!\n\n✅ Blue tick ₦10k (3x views)\n✅ Chat with picture/video/voice\n✅ Money goes to your bank via Paystack\n\nMy referral: ${link}\nFirst 50 get ₦500 FREE + Boost! Join now 👉`;
- window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
- // Simulate referral count
- let cnt=getRefCount()+1; localStorage.setItem('refCount',cnt); document.getElementById('refCount').innerText=cnt;
-}
-function shareShop(name){
- let code=genRef(); let link=location.origin+'/shop.html?name='+encodeURIComponent(name)+'?ref='+code;
- let text=`Check my shop ${name} on Reality Mall Warri! 👟 ${link} - Buy now, pay with Paystack!`;
- window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
-}
-let currentTab='all';
-function switchTab(tab,el){currentTab=tab; document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); renderAll();}
-function renderAll(){
- let q=document.getElementById('q').value.toLowerCase();
- let shops=shopsData.filter(s=>s.name.toLowerCase().includes(q)||currentTab=='all'||s.cat==currentTab);
- document.getElementById('shopsGrid').innerHTML=shops.map(s=>`
-  <div class="card">
-  <span class="badge">Warri</span>
-  <img src="${s.img}" style="width:100%;height:120px;object-fit:cover">
-  <div style="padding:8px"><b style="font-size:13px">${s.name} ✔️</b><br><small>${s.price} • ⭐4.9</small></div>
-  <div style="display:flex"><button class="btn" onclick="location.href='shop.html?name=${encodeURIComponent(s.name)}'">Visit</button><button class="btn btnGreen" onclick="shareShop('${s.name}')">WhatsApp</button></div>
-  </div>`).join('');
- let posts=JSON.parse(localStorage.getItem('reality_posts')||'[]');
- document.getElementById('feedList').innerHTML=posts.slice(0,3).map(p=>`
-  <div class="feed"><b>${p.shop}</b> - ${p.text||''} ${p.reel?'🎬':''}<br><small>${p.time||''}</small></div>`).join('');
-}
-function closeLaunch(){document.getElementById('launchPop').style.display='none'; localStorage.setItem('sawLaunch','1')}
-// Init
-document.getElementById('myRef').innerText=genRef();
-document.getElementById('refCount').innerText=getRefCount();
-document.getElementById('userCount').innerText=12+getRefCount();
-checkUrlRef();
-if(!localStorage.getItem('sawLaunch')) document.getElementById('launchPop').style.display='flex';
-renderAll();
-</script>
-</body></html>
+function setFilter(c,el){document.querySelectorAll('.tabBtn').forEach(b=>b.classList.remove('activeTab')); el.classList.add('activeTab'); render(c);}
+function filterShops(){render(document.querySelector('.activeTab').innerText.replace('🎬 ',''));}
+render();
+</script></body></html>
