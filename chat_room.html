@@ -1,33 +1,119 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Chat Room</title>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Chat Room - Reality Mall</title>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4813832175831420" crossorigin="anonymous"></script>
-<style>*{box-sizing:border-box;font-family:Arial} body{margin:0;background:#e5ddd5;display:flex;flex-direction:column;height:100vh}
+<style>
+*{box-sizing:border-box;font-family:Arial} body{margin:0;background:#e5ddd5;display:flex;flex-direction:column;height:100vh}
 .top{background:#f0f2f5;padding:10px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #ddd}
 .msgs{flex:1;overflow-y:auto;padding:10px}
-.bubble{max-width:75%;padding:8px 12px;border-radius:12px;margin:6px 0;font-size:14px}
-.me{background:#dcf8c6;margin-left:auto}.other{background:#fff;margin-right:auto}
-.inputArea{background:#f0f2f5;padding:8px;display:flex;gap:8px;align-items:center}
-.inputArea input{flex:1;padding:12px;border-radius:24px;border:1px solid #ddd;outline:none}
-.btn{width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;font-size:18px}
-.send{background:#0d63f2;color:#fff}.mic{background:#25d366;color:#fff}
+.bubble{max-width:78%;padding:8px 12px;border-radius:12px;margin:6px 0;font-size:14px;word-break:break-word}
+.me{background:#dcf8c6;margin-left:auto;border-top-right-radius:2px}
+.other{background:#fff;margin-right:auto;border-top-left-radius:2px}
+.inputArea{background:#f0f2f5;padding:8px;display:flex;gap:8px;align-items:center;position:sticky;bottom:0}
+.inputArea input{flex:1;padding:12px 18px;border-radius:24px;border:1px solid #ddd;outline:none;font-size:15px}
+.btn{width:42px;height:42px;border-radius:50%;border:none;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.send{background:#0d63f2;color:#fff}.mic{background:#25d366;color:#fff}.attach{background:#fff}
+.recording{animation:pulse 1s infinite} @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
 </style></head><body>
-<div class="top"><span onclick="history.back()" style="font-size:22px">←</span><div id="av" style="width:36px;height:36px;border-radius:50%;background:#0d63f2;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800">W</div><div style="flex:1"><b id="name">Chat</b><div style="font-size:11px;color:#666" id="status">Online - Private chat, only you can see</div></div></div>
+<div class="top"><span onclick="history.back()" style="font-size:24px;cursor:pointer;padding:4px">←</span><div id="av" style="width:36px;height:36px;border-radius:50%;background:#0d63f2;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800">W</div><div style="flex:1"><b id="name">Chat</b><div style="font-size:11px;color:#128c7e" id="status">Tap and HOLD 🎤 to record voice note</div></div></div>
 <div class="msgs" id="msgs"></div>
 <div class="inputArea">
-<button class="btn" style="background:#fff" onclick="document.getElementById('fileInp').click()">📎</button>
-<input type="file" id="fileInp" accept="image/*" style="display:none" onchange="sendFile(this)">
+<button class="btn attach" onclick="document.getElementById('fileInp').click()">📎</button>
+<input type="file" id="fileInp" accept="image/*,video/*" style="display:none" onchange="sendFile(this)">
 <input id="msgInput" placeholder="Type message..." onkeypress="if(event.key==='Enter')sendText()">
-<button class="btn mic" id="micBtn" onmousedown="startRec()" onmouseup="stopRec()" ontouchstart="startRec()" ontouchend="stopRec()">🎤</button>
+<button class="btn mic" id="micBtn" onpointerdown="startRec(event)" onpointerup="stopRec(event)" onpointerleave="stopRec(event)">🎤</button>
 <button class="btn send" onclick="sendText()">➤</button>
 </div>
+
 <script>
 let chatName=decodeURIComponent(new URLSearchParams(location.search).get('name')||localStorage.getItem('currentChat')||'Warri Sellers Group');
-document.getElementById('name').innerText=chatName; document.getElementById('av').innerText=chatName[0].toUpperCase();
+document.getElementById('name').innerText=chatName;
+document.getElementById('av').innerText=chatName[0].toUpperCase();
 let key='chat_'+chatName;
-function getC(){return JSON.parse(localStorage.getItem(key)||'[]')} function saveC(a){localStorage.setItem(key,JSON.stringify(a))}
-function render(){let arr=getC();let h='';for(let i=0;i<arr.length;i++){let m=arr[i];if(m.type=='text')h+=`<div class="bubble ${m.me?'me':'other'}">${m.text}<div style="font-size:10px;color:#888;text-align:right">${m.time}</div></div>`;else if(m.type=='image')h+=`<div class="bubble ${m.me?'me':'other'}"><img src="${m.data}" style="max-width:200px;border-radius:8px"><div style="font-size:10px">${m.time}</div></div>`;else if(m.type=='voice')h+=`<div class="bubble ${m.me?'me':'other'}"><audio controls src="${m.data}" style="width:180px"></audio><div style="font-size:10px">${m.time}</div></div>`;}
-document.getElementById('msgs').innerHTML=h||'<div style="text-align:center;color:#888;margin-top:30px">🔒 Private chat<br>Only you and '+chatName+'<br><br>Send voice note: Hold 🎤<br>Send picture: Tap 📎</div>';document.getElementById('msgs').scrollTop=99999;}
-function sendText(){let inp=document.getElementById('msgInput');let txt=inp.value.trim();if(!txt)return;let arr=getC();arr.push({type:'text',text:txt,me:true,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})});saveC(arr);inp.value='';render();setTimeout(()=>{let a=getC();a.push({type:'text',text:'Thanks! Seller will reply soon...',me:false,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})});saveC(a);render();},1000);}
-function sendFile(inp){let r=new FileReader();r.onload=e=>{let arr=getC();arr.push({type:'image',data:e.target.result,me:true,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})});saveC(arr);render();};r.readAsDataURL(inp.files[0]);}
-let rec, chunks=[]; async function startRec(){document.getElementById('status').innerText='🔴 Recording... Hold to record';document.getElementById('micBtn').style.background='#f00';try{let s=await navigator.mediaDevices.getUserMedia({audio:true});rec=new MediaRecorder(s);chunks=[];rec.ondataavailable=e=>chunks.push(e.data);rec.onstop=()=>{let blob=new Blob(chunks,{type:'audio/webm'});let rd=new FileReader();rd.onload=e2=>{let arr=getC();arr.push({type:'voice',data:e2.target.result,me:true,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})});saveC(arr);render();};rd.readAsDataURL(blob);};rec.start();}catch(e){alert('Allow microphone!')}} function stopRec(){if(rec&&rec.state=='recording'){rec.stop();document.getElementById('micBtn').style.background='#25d366';document.getElementById('status').innerText='Online';}}
+function getC(){return JSON.parse(localStorage.getItem(key)||'[]')}
+function saveC(a){localStorage.setItem(key,JSON.stringify(a))}
+
+function render(){
+let arr=getC();let h='';
+for(let i=0;i<arr.length;i++){
+let m=arr[i];
+if(m.type=='text') h+=`<div class="bubble ${m.me?'me':'other'}">${m.text}<div style="font-size:10px;color:#667781;text-align:right;margin-top:4px">${m.time} ${m.me?'✔️✔️':''}</div></div>`;
+else if(m.type=='image') h+=`<div class="bubble ${m.me?'me':'other'}"><img src="${m.data}" style="max-width:200px;border-radius:8px;display:block"><div style="font-size:10px;color:#667781;text-align:right;margin-top:4px">${m.time}</div></div>`;
+else if(m.type=='voice'){
+let dur=m.dur||'0:03';
+h+=`<div class="bubble ${m.me?'me':'other'}" style="padding:6px 10px;min-width:180px"><div style="display:flex;align-items:center;gap:8px"><button onclick="this.nextElementSibling.play()" style="width:32px;height:32px;border-radius:50%;background:${m.me?'#128c7e':'#0d63f2'};color:#fff;border:none;cursor:pointer">▶️</button><div style="flex:1"><audio id="aud${i}" src="${m.data}" onloadedmetadata="document.getElementById('dur${i}').innerText=Math.ceil(this.duration)+'s'" style="display:none"></audio><div style="height:3px;background:#ccc;border-radius:2px;margin:6px 0"><div style="height:100%;width:30%;background:${m.me?'#128c7e':'#0d63f2'};border-radius:2px"></div></div><div style="display:flex;justify-content:space-between;font-size:11px;color:#667781"><span>🎤 Voice note</span><span id="dur${i}">${dur}</span></div></div></div><div style="font-size:10px;color:#667781;text-align:right;margin-top:2px">${m.time}</div></div>`;
+}
+}
+document.getElementById('msgs').innerHTML=h||'<div style="text-align:center;color:#888;margin-top:40px;padding:20px;background:#fff;border-radius:12px;margin:20px"><div style="font-size:40px">🔒</div><b>Private Chat with '+chatName+'</b><br><small>Only you and seller can see messages</small><br><br><div style="background:#f0f2f5;padding:10px;border-radius:10px;text-align:left;font-size:13px">🎤 <b>Voice Note:</b> HOLD the red mic button<br>📎 <b>Picture:</b> Tap paperclip<br>▶️ <b>Play:</b> Tap ▶️ to play voice</div></div>';
+document.getElementById('msgs').scrollTop=document.getElementById('msgs').scrollHeight;
+}
+
+function sendText(){
+let inp=document.getElementById('msgInput');let txt=inp.value.trim();if(!txt)return;
+let arr=getC();arr.push({type:'text',text:txt,me:true,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})});saveC(arr);inp.value='';render();
+setTimeout(()=>{let a=getC();a.push({type:'text',text:'Thanks! Seller will reply soon...',me:false,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})});saveC(a);render();},1200);
+}
+
+function sendFile(inp){
+if(!inp.files[0])return;
+let r=new FileReader();r.onload=e=>{
+let arr=getC();arr.push({type:'image',data:e.target.result,me:true,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})});saveC(arr);render();
+};r.readAsDataURL(inp.files[0]);
+}
+
+// FIXED VOICE NOTE - Works on Android
+let mediaRecorder=null; let audioChunks=[]; let startTime=0; let isRecording=false;
+
+async function startRec(e){
+e.preventDefault();
+if(isRecording)return;
+try{
+let stream=await navigator.mediaDevices.getUserMedia({audio:true});
+let options={};
+if(MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) options.mimeType='audio/webm;codecs=opus';
+else if(MediaRecorder.isTypeSupported('audio/webm')) options.mimeType='audio/webm';
+else if(MediaRecorder.isTypeSupported('audio/mp4')) options.mimeType='audio/mp4';
+else if(MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')) options.mimeType='audio/ogg;codecs=opus';
+
+mediaRecorder=new MediaRecorder(stream,options);
+audioChunks=[]; startTime=Date.now(); isRecording=true;
+
+mediaRecorder.ondataavailable=ev=>{if(ev.data.size>0)audioChunks.push(ev.data);};
+
+mediaRecorder.onstop=()=>{
+let blob=new Blob(audioChunks,{type:mediaRecorder.mimeType});
+if(blob.size<100){alert('Too short! Hold mic longer (at least 1 second)');return;}
+let reader=new FileReader();
+reader.onload=e2=>{
+let dur=Math.ceil((Date.now()-startTime)/1000)+'s';
+let arr=getC();arr.push({type:'voice',data:e2.target.result,me:true,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),dur:dur});saveC(arr);render();
+stream.getTracks().forEach(t=>t.stop());
+};
+reader.readAsDataURL(blob);
+};
+
+mediaRecorder.start(100);
+document.getElementById('micBtn').style.background='#ff0000';
+document.getElementById('micBtn').classList.add('recording');
+document.getElementById('status').innerText='🔴 Recording... Release to send | Slide to cancel';
+document.getElementById('status').style.color='#ff0000';
+
+}catch(err){
+alert('Microphone error: '+err.message+'\n\nPlease: 1. Use HTTPS (Vercel is HTTPS OK) 2. Allow mic permission in browser settings');
+}
+}
+
+function stopRec(e){
+if(e)e.preventDefault();
+if(!isRecording||!mediaRecorder)return;
+if(mediaRecorder.state==='recording'){
+mediaRecorder.stop();
+}
+isRecording=false;
+document.getElementById('micBtn').style.background='#25d366';
+document.getElementById('micBtn').classList.remove('recording');
+document.getElementById('status').innerText='Tap and HOLD 🎤 to record voice note';
+document.getElementById('status').style.color='#128c7e';
+}
+
 render();
-</script></body></html>
+</script>
+</body></html>
